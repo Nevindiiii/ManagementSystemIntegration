@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { User, Mail, Lock, AlertCircle } from 'lucide-react';
+import { User, Mail, Lock, AlertCircle, Eye, EyeOff, UserPlus } from 'lucide-react';
 import { z } from 'zod';
 import { useAuth } from '@/contexts/AuthContext';
 import { toast } from 'sonner';
@@ -55,6 +55,8 @@ function signup({ onRegister }: SignupProps) {
 
   const [isLoading, setIsLoading] = useState(false);
   const [errors, setErrors] = useState<ValidationErrors>({});
+  const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
@@ -130,7 +132,8 @@ function signup({ onRegister }: SignupProps) {
         <div className="bg-white/80 backdrop-blur-sm border border-gray-200/50 rounded-3xl shadow-2xl p-8">
           {/* Header */}
           <div className="text-center mb-8">
-            <h1 className="text-3xl font-bold text-black mb-2">Sign Up</h1>
+            <UserPlus className="w-12 h-12 text-black mx-auto mb-4" />
+            <h1 className="text-3xl font-bold text-black mb-2">Create Account</h1>
             <p className="text-gray-700 text-sm">Please sign up to continue</p>
           </div>
 
@@ -195,13 +198,20 @@ function signup({ onRegister }: SignupProps) {
               }`}>
                 <Lock className="w-5 h-5 text-black mr-3" />
                 <input
-                  type="password"
+                  type={showPassword ? "text" : "password"}
                   name="password"
                   placeholder="Password"
                   value={formData.password}
                   onChange={handleInputChange}
                   className="flex-1 bg-transparent outline-none text-black placeholder-gray-600"
                 />
+                <button
+                  type="button"
+                  onClick={() => setShowPassword(!showPassword)}
+                  className="text-black hover:text-gray-600 transition-colors ml-2"
+                >
+                  {showPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
+                </button>
               </div>
               {errors.password && (
                 <div className="flex items-center mt-1 text-red-500 text-sm">
@@ -220,13 +230,20 @@ function signup({ onRegister }: SignupProps) {
               }`}>
                 <Lock className="w-5 h-5 text-black mr-3" />
                 <input
-                  type="password"
+                  type={showConfirmPassword ? "text" : "password"}
                   name="confirmPassword"
                   placeholder="Confirm Password"
                   value={formData.confirmPassword}
                   onChange={handleInputChange}
                   className="flex-1 bg-transparent outline-none text-black placeholder-gray-600"
                 />
+                <button
+                  type="button"
+                  onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                  className="text-black hover:text-gray-600 transition-colors ml-2"
+                >
+                  {showConfirmPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
+                </button>
               </div>
               {errors.confirmPassword && (
                 <div className="flex items-center mt-1 text-red-500 text-sm">

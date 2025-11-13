@@ -1,4 +1,4 @@
-import { BarChart3,  UserPlus,  ChevronLeft, Menu, Package } from "lucide-react"
+import { BarChart3,  UserPlus, Package, User } from "lucide-react"
 import { useNavigate, useLocation } from 'react-router'
 
 import {
@@ -10,8 +10,8 @@ import {
   SidebarMenuButton,
   SidebarMenuItem,
   SidebarHeader,
-  SidebarFooter,
-  useSidebar,
+ 
+  
 } from "@/components/ui/sidebar"
 
 // Menu items to match the image
@@ -31,23 +31,27 @@ const items = [
     url: "/products",
     icon: Package,
   },
-  
+  {
+    title: "Profile",
+    url: "/profile",
+    icon: User,
+  },
 ]
 
 export function AppSidebar() {
-  const { state, toggleSidebar } = useSidebar()
+  
   const navigate = useNavigate()
   const location = useLocation()
-  const isCollapsed = state === "collapsed"
+  
 
   return (
-    <Sidebar className="border-r-0" collapsible="icon">
-      <SidebarContent className="bg-slate-800 text-white">
-        {/* Header with blue accent */}
-        <SidebarHeader className="border-b border-slate-700 p-4">
+    <Sidebar className="border-r-0 w-16" collapsible="none">
+      <SidebarContent className="bg-white text-black">
+        {/* Header with black accent */}
+        <SidebarHeader className="border-b border-gray-200 p-3">
           <div className="flex items-center justify-center">
-            <div className="w-8 h-8 bg-blue-500 rounded-md flex items-center justify-center">
-              <div className="w-4 h-4 bg-white rounded-sm"></div>
+            <div className="w-6 h-6 bg-black rounded-md flex items-center justify-center">
+              <div className="w-3 h-3 bg-white rounded-sm"></div>
             </div>
           </div>
         </SidebarHeader>
@@ -55,7 +59,7 @@ export function AppSidebar() {
         {/* Navigation Menu */}
         <SidebarGroup className="flex-1 p-0">
           <SidebarGroupContent>
-            <SidebarMenu className="space-y-1 px-3 py-4">
+            <SidebarMenu className="space-y-2 px-2 py-4">
               {items.map((item) => {
                 const isActive = item.url === '#' ? false : 
                   (item.url === '/' ? location.pathname === '/' : location.pathname.startsWith(item.url))
@@ -70,20 +74,16 @@ export function AppSidebar() {
                         }
                       }}
                       className={`
-                        w-full flex items-center gap-3 px-3 py-3 rounded-lg transition-all duration-200
-                        hover:bg-slate-700 
+                        w-12 h-12 flex items-center justify-center rounded-lg transition-all duration-200
+                        hover:bg-blue-50 
                         ${isActive 
-                          ? 'bg-blue-600 text-white shadow-lg' 
-                          : 'text-slate-300 hover:text-white'
+                          ? 'bg-black text-white shadow-lg' 
+                          : 'text-black hover:text-blue-600'
                         }
-                        ${isCollapsed ? 'justify-center px-2' : 'justify-start'}
                       `}
-                      tooltip={isCollapsed ? item.title : undefined}
+                      tooltip={item.title}
                     >
-                      <Icon className="w-5 h-5 shrink-0" />
-                      {!isCollapsed && (
-                        <span className="font-medium text-sm">{item.title}</span>
-                      )}
+                      <Icon className="w-5 h-5" />
                     </SidebarMenuButton>
                   </SidebarMenuItem>
                 )
@@ -91,23 +91,6 @@ export function AppSidebar() {
             </SidebarMenu>
           </SidebarGroupContent>
         </SidebarGroup>
-
-        {/* Footer with collapse button */}
-        <SidebarFooter className="border-t border-slate-700 p-3">
-          <SidebarMenuButton
-            onClick={toggleSidebar}
-            className="w-full flex items-center gap-3 px-3 py-3 rounded-lg transition-all duration-200 hover:bg-slate-700 text-slate-300 hover:text-white"
-          >
-            {isCollapsed ? (
-              <Menu className="w-5 h-5" />
-            ) : (
-              <>
-                <ChevronLeft className="w-5 h-5" />
-                <span className="font-medium text-sm">Collapse Sidebar</span>
-              </>
-            )}
-          </SidebarMenuButton>
-        </SidebarFooter>
       </SidebarContent>
     </Sidebar>
   )
