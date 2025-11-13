@@ -1,7 +1,7 @@
 import { Button } from '../ui/button';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '@/contexts/AuthContext';
-import { LogOut, User, ChevronDown } from 'lucide-react';
+import { LogOut, User, ChevronDown, Settings } from 'lucide-react';
 
 import {
   DropdownMenu,
@@ -15,17 +15,10 @@ import {
 export function LayoutHeader() {
   const navigate = useNavigate();
   const { user, logout } = useAuth();
-
-
   const handleLogout = () => {
     console.log('Logging out...');
-    // Clear user data and navigate to login
     logout();
     navigate('/');
-  };
-
-  const handleProfile = () => {
-    navigate('/profile');
   };
 
   const firstName = user?.name?.split(' ')[0] || 'User';
@@ -58,8 +51,9 @@ export function LayoutHeader() {
               </div>
             </DropdownMenuLabel>
             <DropdownMenuSeparator />
-            <DropdownMenuItem onClick={handleProfile} className="text-black focus:text-blue-600 cursor-pointer">
-              
+            <DropdownMenuItem onClick={() => navigate('/profile')} className="text-black focus:text-blue-600 cursor-pointer">
+              <Settings className="mr-2 h-4 w-4" />
+              <span>Settings</span>
             </DropdownMenuItem>
             <DropdownMenuItem onClick={handleLogout} className="text-red-600 focus:text-red-600 cursor-pointer">
               <LogOut className="mr-2 h-4 w-4" />

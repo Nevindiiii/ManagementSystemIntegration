@@ -74,7 +74,7 @@ export default function AdminDashboard() {
 
 
   return (
-    <div className="min-h-screen  mt-[-60px] bg-gradient-to-br from-slate-50 via-blue-50/30 to-indigo-50/50 p-6 animate-fade-in">
+    <div className="min-h-screen ml-[-40px] mt-[-60px] bg-gradient-to-br from-slate-50 via-blue-50/30 to-indigo-50/50 p-6 animate-fade-in">
       {/* Header Section */}
       <div className="flex items-start justify-between mb-8">
         <div className="animate-slide-up">

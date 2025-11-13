@@ -1,5 +1,7 @@
 import { BarChart3,  UserPlus, Package, User } from "lucide-react"
 import { useNavigate, useLocation } from 'react-router'
+import { useState } from 'react'
+import { ProfileModal } from '@/components/user-profile/profile-modal'
 
 import {
   Sidebar,
@@ -39,9 +41,9 @@ const items = [
 ]
 
 export function AppSidebar() {
-  
   const navigate = useNavigate()
   const location = useLocation()
+  const [isProfileModalOpen, setIsProfileModalOpen] = useState(false)
   
 
   return (
@@ -69,7 +71,9 @@ export function AppSidebar() {
                   <SidebarMenuItem key={item.title}>
                     <SidebarMenuButton
                       onClick={() => {
-                        if (item.url !== '#') {
+                        if (item.url === '/profile') {
+                          setIsProfileModalOpen(true)
+                        } else if (item.url !== '#') {
                           navigate(item.url)
                         }
                       }}
@@ -92,6 +96,11 @@ export function AppSidebar() {
           </SidebarGroupContent>
         </SidebarGroup>
       </SidebarContent>
+      
+      <ProfileModal 
+        isOpen={isProfileModalOpen} 
+        onClose={() => setIsProfileModalOpen(false)} 
+      />
     </Sidebar>
   )
 }
