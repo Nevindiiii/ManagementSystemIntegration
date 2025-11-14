@@ -41,7 +41,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
 
   // Auto-logout function
   const performAutoLogout = useCallback(async () => {
-    console.log('Token expired - performing auto logout');
+    console.log('Cookie deleted - performing auto logout');
     try {
       await authService.logout();
     } catch (error) {
@@ -53,24 +53,25 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     }
   }, [navigate]);
 
-  // Check token expiration
-  const checkTokenExpiration = useCallback(() => {
-    const currentTokenData = authService.getTokenData();
-    if (currentTokenData && user) {
-      const currentTime = Date.now() / 1000;
-      const tokenExp = currentTokenData.exp;
-      
-      // If token is expired, auto logout
-      if (tokenExp && currentTime >= tokenExp) {
+  // Check cookie status
+  const checkCookieStatus = useCallback(async () => {
+    if (user && tokenData) {
+      try {
+        const response = await fetch('http://localhost:5000/api/auth/verify', {
+          method: 'GET',
+          credentials: 'include'
+        });
+        
+        if (!response.ok) {
+          performAutoLogout();
+        }
+      } catch (error) {
         performAutoLogout();
-        return true; // Token expired
       }
     }
-    return false; // Token valid or no token
-  }, [user, performAutoLogout]);
+  }, [user, tokenData, performAutoLogout]);
 
   useEffect(() => {
-    // Check if user is already authenticated on app start
     const initializeAuth = () => {
       try {
         const currentTokenData = authService.getTokenData();
@@ -81,11 +82,9 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
             setTokenData(currentTokenData);
           }
         } else if (currentTokenData) {
-          // Token exists but expired, clear it
           authService.removeTokenData();
         }
       } catch (error) {
-        // Silently handle auth errors
         console.error('Auth initialization error:', error);
       } finally {
         setLoading(false);
@@ -95,28 +94,16 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     initializeAuth();
   }, []);
 
-  // Token expiration monitoring
+  // Cookie monitoring
   useEffect(() => {
     if (!user || !tokenData) return;
 
-    // Check token expiration every 30 seconds
-    const tokenCheckInterval = setInterval(() => {
-      checkTokenExpiration();
-    }, 30 * 1000);
+    const cookieCheckInterval = setInterval(() => {
+      checkCookieStatus();
+    }, 2000);
 
-    // Also check on window focus
-    const handleWindowFocus = () => {
-      checkTokenExpiration();
-    };
-
-    window.addEventListener('focus', handleWindowFocus);
-
-    // Cleanup
-    return () => {
-      clearInterval(tokenCheckInterval);
-      window.removeEventListener('focus', handleWindowFocus);
-    };
-  }, [user, tokenData, checkTokenExpiration]);
+    return () => clearInterval(cookieCheckInterval);
+  }, [user, tokenData, checkCookieStatus]);
 
   const login = async (credentials: LoginCredentials): Promise<void> => {
     try {
@@ -152,10 +139,12 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
       await authService.logout();
       setUser(null);
       setTokenData(null);
+      navigate('/', { replace: true });
     } catch (error) {
       console.error('Logout error:', error);
       setUser(null);
       setTokenData(null);
+      navigate('/', { replace: true });
     }
   };
 

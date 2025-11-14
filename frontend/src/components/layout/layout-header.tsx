@@ -24,7 +24,7 @@ export function LayoutHeader() {
   const firstName = user?.name?.split(' ')[0] || 'User';
 
   return (
-    <div className="flex h-20 items-center justify-between gap-2 border-b border-gray-300 bg-white px-4">
+    <div className="flex h-20 items-center justify-between gap-2 border-b border-gray-300 bg-white px-4 ">
       {/* Left side - can add title or other elements here */}
       <div></div>
 

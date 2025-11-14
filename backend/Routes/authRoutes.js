@@ -140,6 +140,15 @@ router.post('/login', async (req, res) => {
   }
 });
 
+// Verify auth cookie exists
+router.get('/verify', (req, res) => {
+  const token = req.cookies.auth_token;
+  if (!token) {
+    return res.status(401).json({ success: false, message: 'No token found' });
+  }
+  res.json({ success: true, message: 'Token exists' });
+});
+
 // Logout user
 router.post('/logout', (req, res) => {
   res.clearCookie('auth_token');
