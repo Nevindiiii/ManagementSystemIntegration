@@ -134,7 +134,7 @@ router.post('/add', async (req, res) => {
     
     console.log('Attempting to save user to database with ID:', id);
     const savedUser = await newUser.save();
-    console.log('✅ User saved successfully to database:', savedUser.firstName, savedUser.lastName, 'with ID:', savedUser.id);
+    console.log('User saved successfully to database:', savedUser.firstName, savedUser.lastName, 'with ID:', savedUser.id);
     
     // Emit Socket.IO event
     const io = req.app.get('io');

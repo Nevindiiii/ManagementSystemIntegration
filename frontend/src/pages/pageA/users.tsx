@@ -1,7 +1,7 @@
 import { User } from '@/components/data-table/columns';
 import RowsPerPageSelect from '@/components/customUi/rows-per-page-select';
 import { usePostStore } from '@/store/postStore';
-import { useUsers, useCreateUser } from '@/hooks/useUserQueries';
+import { useUsers, useCreateUser, useDeleteUser } from '@/hooks/useUserQueries';
 import React from 'react';
 import { Input } from '@/components/ui/input';
 import { DataTablePagination } from '@/components/customUi/pagination';
@@ -11,6 +11,8 @@ import TableColumnsDropdown from '@/components/data-table/table-columns-dropdown
 import SuccessAlert from '@/components/customUi/success-alert';
 import UsersTable from './tables/table-columns/users-table';
 import { toast } from 'sonner';
+import { Trash2 } from 'lucide-react';
+import DeleteAlert from '@/components/customUi/delete-alert';
 
 type Props = {
   data?: User[];
@@ -18,12 +20,15 @@ type Props = {
 };
 
 export default function NewlyAddedUsersTable({ data, onAddData }: Props) {
-  const { newPosts } = usePostStore();
+  const { newPosts, removePost } = usePostStore();
   const { data: backendUsers, isLoading, error } = useUsers();
   const createUserMutation = useCreateUser();
+  const deleteUserMutation = useDeleteUser();
   
   const [addOpen, setAddOpen] = React.useState(false);
   const [successOpen, setSuccessOpen] = React.useState(false);
+  const [deleteOpen, setDeleteOpen] = React.useState(false);
+  const [isDeleting, setIsDeleting] = React.useState(false);
 
   // Handle query errors with toast notifications
   React.useEffect(() => {
@@ -38,6 +43,37 @@ export default function NewlyAddedUsersTable({ data, onAddData }: Props) {
   // pagination state (data-driven)
   const [currentPage, setCurrentPage] = React.useState(0);
   const pageSize = 10;
+
+  // Get selected rows
+  const selectedRows = table?.getSelectedRowModel?.()?.rows || [];
+  const selectedCount = selectedRows.length;
+
+  // Bulk delete handler
+  const handleBulkDelete = async () => {
+    setIsDeleting(true);
+    try {
+      const selectedUsers = selectedRows.map((row: any) => row.original);
+      
+      // Delete each user
+      for (const user of selectedUsers) {
+        try {
+          await deleteUserMutation.mutateAsync(user.id);
+        } catch (error) {
+          console.error(`Failed to delete user ${user.id}:`, error);
+          removePost(user.id);
+        }
+      }
+      
+      toast.success(`Successfully deleted ${selectedUsers.length} user(s)`);
+      table?.resetRowSelection?.();
+      setDeleteOpen(false);
+    } catch (error) {
+      console.error('Bulk delete failed:', error);
+      toast.error('Failed to delete some users');
+    } finally {
+      setIsDeleting(false);
+    }
+  };
 
   const getColumn = React.useCallback(
     (id: string) => {
@@ -139,6 +175,16 @@ export default function NewlyAddedUsersTable({ data, onAddData }: Props) {
         />
 
         <div className="flex gap-3">
+          {selectedCount > 0 && (
+            <Button
+              variant="destructive"
+              onClick={() => setDeleteOpen(true)}
+              disabled={isDeleting}
+            >
+              <Trash2 className="w-4 h-4 mr-2" />
+              Delete ({selectedCount})
+            </Button>
+          )}
           <TableColumnsDropdown table={table} />
           <Button 
             onClick={() => setAddOpen(true)}
@@ -165,7 +211,13 @@ export default function NewlyAddedUsersTable({ data, onAddData }: Props) {
         }}
       />
 
-      {/* <SuccessAlert open={successOpen} onOpenChange={setSuccessOpen} /> */}
+      <DeleteAlert
+        open={deleteOpen}
+        onOpenChange={setDeleteOpen}
+        itemName={`${selectedCount} user(s)`}
+        onConfirm={handleBulkDelete}
+        isLoading={isDeleting}
+      />
 
       <UsersTable
         data={allUsers}

@@ -148,7 +148,7 @@ export function DataTable<TData, TValue>({
     return workingColumns;
   }, [columns, customColumns, hiddenColumns, columnOrder, columnWidths, columnHeaders]);
 
-  const { table, columnFilters, setColumnFilters, columnVisibility, setColumnVisibility } = useAppTable(data, processedColumns);
+  const { table, columnFilters, setColumnFilters, columnVisibility, setColumnVisibility, rowSelection } = useAppTable(data, processedColumns);
 
   // expose a small reactive API to parent so external pagination controls
   // receive updates only when relevant table state changes. We memoize
@@ -166,11 +166,16 @@ export function DataTable<TData, TValue>({
       setPageIndex: (i: number) => table.setPageIndex(i),
       previousPage: () => table.previousPage(),
       nextPage: () => table.nextPage(),
+      getSelectedRowModel: () => table.getSelectedRowModel(),
+      getIsAllPageRowsSelected: () => table.getIsAllPageRowsSelected(),
+      toggleAllPageRowsSelected: (value?: boolean) => table.toggleAllPageRowsSelected(value),
+      resetRowSelection: () => table.resetRowSelection(),
   // expose column filters and visibility so parents re-render when they change
   columnFilters,
   setColumnFilters,
   columnVisibility,
   setColumnVisibility,
+  rowSelection,
     };
     // include the primitive values/readers used above as dependencies so
     // the memo updates only when these change.
@@ -185,6 +190,7 @@ export function DataTable<TData, TValue>({
     // controls (filter inputs and column visibility dropdown) update
     columnFilters,
     columnVisibility,
+    rowSelection,
   ]);
 
   React.useEffect(() => {

@@ -10,12 +10,14 @@ import {
   type SortingState,
   type ColumnFiltersState,
   type VisibilityState,
+  type RowSelectionState,
 } from "@tanstack/react-table";
 
 export function useAppTable<TData>(data: TData[], columns: ColumnDef<TData, any>[]) {
   const [sorting, setSorting] = useState<SortingState>([]);
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
   const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({});
+  const [rowSelection, setRowSelection] = useState<RowSelectionState>({});
 
   const memoData = useMemo(() => data, [data]);
   const memoCols = useMemo(() => columns, [columns]);
@@ -32,8 +34,10 @@ export function useAppTable<TData>(data: TData[], columns: ColumnDef<TData, any>
     onColumnFiltersChange: setColumnFilters,
     getFilteredRowModel: getFilteredRowModel(),
     onColumnVisibilityChange: setColumnVisibility,
-    state: { sorting, columnFilters, columnVisibility },
+    onRowSelectionChange: setRowSelection,
+    enableRowSelection: true,
+    state: { sorting, columnFilters, columnVisibility, rowSelection },
   });
 
-  return { table, sorting, columnFilters, columnVisibility, setSorting, setColumnFilters, setColumnVisibility };
+  return { table, sorting, columnFilters, columnVisibility, rowSelection, setSorting, setColumnFilters, setColumnVisibility, setRowSelection };
 }

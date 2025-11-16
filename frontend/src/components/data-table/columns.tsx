@@ -3,6 +3,9 @@ import { Eye, Edit, Trash2 } from 'lucide-react';
 import { useState } from 'react';
 import { z } from 'zod';
 import { Button } from '@/components/ui/button';
+import { Avatar, AvatarFallback } from '@/components/ui/avatar';
+import { Badge } from '@/components/ui/badge';
+import { Checkbox } from '@/components/ui/checkbox';
 import { UserForm } from '@/components/form/add-post-form';
 import { usePostStore } from '@/store/postStore';
 import { useUpdateUser, useDeleteUser } from '@/hooks/useUserQueries';
@@ -175,20 +178,58 @@ function ActionsCell({ user }: { user: User }) {
 
 export const columns: ColumnDef<User>[] = [
   {
+    id: 'select',
+    header: ({ table }) => (
+      <Checkbox
+        checked={table.getIsAllPageRowsSelected()}
+        onCheckedChange={(value) => table.toggleAllPageRowsSelected(!!value)}
+        aria-label="Select all"
+      />
+    ),
+    cell: ({ row }) => (
+      <Checkbox
+        checked={row.getIsSelected()}
+        onCheckedChange={(value) => row.toggleSelected(!!value)}
+        aria-label="Select row"
+      />
+    ),
+    enableSorting: false,
+    enableHiding: false,
+  },
+  {
     accessorKey: 'id',
     header: 'ID',
+    cell: ({ row }) => (
+      <Badge variant="outline" className="font-mono">
+        #{row.original.id}
+      </Badge>
+    ),
   },
   {
     accessorKey: 'firstName',
-    header: 'First Name',
-  },
-  {
-    accessorKey: 'lastName',
-    header: 'Last Name',
-  },
-  {
-    accessorKey: 'email',
-    header: 'Email',
+    header: 'User',
+    cell: ({ row }) => {
+      const firstName = row.original.firstName || '';
+      const lastName = row.original.lastName || '';
+      const initials = `${firstName[0] || ''}${lastName[0] || ''}`.toUpperCase();
+      return (
+        <div className="flex items-center gap-3">
+          <Avatar className="h-9 w-9 border-2 border-primary/20">
+            <AvatarFallback className="text-xs font-bold bg-primary/10 text-primary">
+              {initials || '??'}
+            </AvatarFallback>
+          </Avatar>
+          <div className="flex flex-col">
+            <span className="font-medium text-sm">
+              {firstName} {lastName}
+            </span>
+            <span className="text-xs text-muted-foreground">
+              {row.original.email}
+            </span>
+          </div>
+        </div>
+      );
+    },
   },
   {
     accessorKey: 'phone',
@@ -197,6 +238,14 @@ export const columns: ColumnDef<User>[] = [
   {
     accessorKey: 'age',
     header: 'Age',
+    cell: ({ row }) => {
+      const age = row.original.age;
+      let variant: 'default' | 'success' | 'warning' = 'default';
+      if (age < 30) variant = 'success';
+      else if (age >= 30 && age < 50) variant = 'default';
+      else variant = 'warning';
+      return <Badge variant={variant}>{age} years</Badge>;
+    },
   },
   {
     accessorKey: 'birthDate',
