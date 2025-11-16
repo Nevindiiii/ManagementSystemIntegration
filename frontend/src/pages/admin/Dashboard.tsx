@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Users, BarChart2,  Package, TrendingUp, Activity, User, Eye, Clock,  LucideIcon } from 'lucide-react';
+import { Users, BarChart2,  Package, TrendingUp, Activity, User, Eye, Clock,  LucideIcon, UserPlus, Calendar } from 'lucide-react';
 import { NotificationPanel } from '@/components/customUi/NotificationPanel';
 
 interface ActivityItem {
@@ -40,6 +40,28 @@ export default function AdminDashboard() {
     const others = (users || []).filter((u: any) => !existingIds.has(u.id));
     return [...(newPosts || []), ...others];
   }, [users, newPosts]);
+
+  // Today's new users
+  const todaysNewUsers = React.useMemo(() => {
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    return combinedUsers.filter((user: any) => {
+      const userDate = new Date(user.createdAt || Date.now());
+      return userDate >= today;
+    });
+  }, [combinedUsers]);
+
+  // Age range calculation
+  const ageRange = React.useMemo(() => {
+    if (combinedUsers.length === 0) return { min: 0, max: 0, avg: 0 };
+    const ages = combinedUsers.map((user: any) => user.age || 0).filter((age: number) => age > 0);
+    if (ages.length === 0) return { min: 0, max: 0, avg: 0 };
+    return {
+      min: Math.min(...ages),
+      max: Math.max(...ages),
+      avg: Math.round(ages.reduce((a: number, b: number) => a + b, 0) / ages.length)
+    };
+  }, [combinedUsers]);
 
   // Recent activity data
   const recentActivity = React.useMemo(() => {
@@ -144,15 +166,21 @@ export default function AdminDashboard() {
         <div className="bg-white rounded-lg border p-6 shadow-sm">
           <div className="flex items-center justify-between">
             <div>
-              <p className="text-muted-foreground text-sm mb-1">Active Sessions</p>
-              <p className="text-2xl font-bold mb-2">24</p>
+              <p className="text-muted-foreground text-sm mb-1">Today's New Users</p>
+              {usersLoading ? (
+                <div className="w-16 h-8 bg-muted rounded animate-pulse mb-2"></div>
+              ) : (
+                <p className="text-2xl font-bold mb-2">
+                  {todaysNewUsers.length}
+                </p>
+              )}
               <p className="text-blue-600 text-sm flex items-center">
-                <span className="w-2 h-2 bg-blue-500 rounded-full mr-2"></span>
-                Live now
+                <Calendar className="w-3 h-3 mr-1" />
+                Added today
               </p>
             </div>
             <div className="p-3 bg-purple-600 rounded-lg">
-              <Activity className="w-5 h-5 text-white" />
+              <UserPlus className="w-5 h-5 text-white" />
             </div>
           </div>
         </div>
@@ -160,15 +188,21 @@ export default function AdminDashboard() {
         <div className="bg-white rounded-lg border p-6 shadow-sm">
           <div className="flex items-center justify-between">
             <div>
-              <p className="text-muted-foreground text-sm mb-1">Performance</p>
-              <p className="text-2xl font-bold mb-2">98.5%</p>
-              <p className="text-green-600 text-sm flex items-center">
-                <TrendingUp className="w-3 h-3 mr-1" />
-                Excellent status
+              <p className="text-muted-foreground text-sm mb-1">User Age Range</p>
+              {usersLoading ? (
+                <div className="w-16 h-8 bg-muted rounded animate-pulse mb-2"></div>
+              ) : (
+                <p className="text-2xl font-bold mb-2">
+                  {ageRange.min}-{ageRange.max}
+                </p>
+              )}
+              <p className="text-orange-600 text-sm flex items-center">
+                <Activity className="w-3 h-3 mr-1" />
+                Avg: {ageRange.avg} years
               </p>
             </div>
             <div className="p-3 bg-orange-600 rounded-lg">
-              <BarChart2 className="w-5 h-5 text-white" />
+              <Users className="w-5 h-5 text-white" />
             </div>
           </div>
         </div>
