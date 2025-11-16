@@ -1,10 +1,5 @@
 import type { ReactNode } from 'react';
-import {
-  SidebarProvider,
-  SidebarInset,
-  useSidebar,
-} from '@/components/ui/sidebar';
-import { AppSidebar } from '@/components/navbar/app-sidebar';
+import { FloatingNavbar } from '@/components/navbar/FloatingNavbar';
 import { LayoutHeader } from './layout-header';
 
 
@@ -12,23 +7,15 @@ type LayoutProps = {
   children: ReactNode;
 };
 
-const MainContent = ({ children }: { children: ReactNode }) => {
-  return (
-    <SidebarInset className="ms-page">
-      <LayoutHeader />
-      <main className="ms-container">
-        {children}
-      </main>
-    </SidebarInset>
-  );
-};
-
 const Layout = ({ children }: LayoutProps) => {
   return (
-    <SidebarProvider>
-      <AppSidebar />
-      <MainContent>{children}</MainContent>
-    </SidebarProvider>
+    <div className="min-h-screen bg-slate-50">
+      <LayoutHeader />
+      <main className="max-w-7xl mx-auto px-6 py-8 pb-24">
+        {children}
+      </main>
+      <FloatingNavbar />
+    </div>
   );
 };
 
