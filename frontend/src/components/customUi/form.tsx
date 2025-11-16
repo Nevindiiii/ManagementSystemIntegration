@@ -122,7 +122,7 @@ export function CustomForm({ initialData, isEdit, nextId, onSubmit, onOpenChange
 					</label>
 					<Input
 						name="firstName"
-						placeholder="John"
+						placeholder="Name"
 						error={errors.firstName}
 						onChange={() => clearFieldError('firstName')}
 						defaultValue={initialData?.firstName}
@@ -136,7 +136,7 @@ export function CustomForm({ initialData, isEdit, nextId, onSubmit, onOpenChange
 					</label>
 					<Input
 						name="lastName"
-						placeholder="Doe"
+						placeholder="last name"
 						error={errors.lastName}
 						onChange={() => clearFieldError('lastName')}
 						defaultValue={initialData?.lastName}
@@ -153,7 +153,7 @@ export function CustomForm({ initialData, isEdit, nextId, onSubmit, onOpenChange
 				<Input
 					name="email"
 					type="email"
-					placeholder="john.doe@example.com"
+					placeholder="name@example.com"
 					error={errors.email}
 					onChange={() => clearFieldError('email')}
 					defaultValue={initialData?.email}

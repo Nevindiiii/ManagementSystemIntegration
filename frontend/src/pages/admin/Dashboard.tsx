@@ -1,5 +1,6 @@
 import * as React from 'react';
 import { Users, BarChart2,  Package, TrendingUp, Activity, User, Eye, Clock,  LucideIcon } from 'lucide-react';
+import { NotificationPanel } from '@/components/customUi/NotificationPanel';
 
 interface ActivityItem {
   type: string;
@@ -82,6 +83,7 @@ export default function AdminDashboard() {
             <p className="text-muted-foreground mt-2">Welcome back! Here's your business overview</p>
           </div>
           <div className="flex gap-3">
+            <NotificationPanel />
             <Button variant="outline" onClick={() => navigate('/products')}>
               <Eye className="w-4 h-4 mr-2" />
               View Products

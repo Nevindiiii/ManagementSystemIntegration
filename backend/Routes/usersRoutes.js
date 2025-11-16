@@ -136,6 +136,15 @@ router.post('/add', async (req, res) => {
     const savedUser = await newUser.save();
     console.log('✅ User saved successfully to database:', savedUser.firstName, savedUser.lastName, 'with ID:', savedUser.id);
     
+    // Emit Socket.IO event
+    const io = req.app.get('io');
+    io.emit('user:added', {
+      id: savedUser.id,
+      firstName: savedUser.firstName,
+      lastName: savedUser.lastName,
+      email: savedUser.email,
+    });
+    
     res.status(201).json({
       success: true,
       message: `User created successfully with ID ${savedUser.id}`,
@@ -253,6 +262,16 @@ router.put('/:id', async (req, res) => {
     }
     
     console.log('User updated successfully:', updatedUser.firstName, updatedUser.lastName);
+    
+    // Emit Socket.IO event
+    const io = req.app.get('io');
+    io.emit('user:updated', {
+      id: updatedUser.id,
+      firstName: updatedUser.firstName,
+      lastName: updatedUser.lastName,
+      email: updatedUser.email,
+    });
+    
     res.json({
       success: true,
       message: 'User updated successfully',
@@ -329,6 +348,14 @@ router.delete('/:id', async (req, res) => {
         message: `User with ID ${userId} not found. The user may have been already deleted.`
       });
     }
+    
+    // Emit Socket.IO event
+    const io = req.app.get('io');
+    io.emit('user:deleted', {
+      id: deletedUser.id,
+      firstName: deletedUser.firstName,
+      lastName: deletedUser.lastName,
+    });
     
     res.json({
       success: true,

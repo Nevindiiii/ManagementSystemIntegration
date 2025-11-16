@@ -15,6 +15,7 @@ import { AuthProvider } from './contexts/AuthContext';
 import { ProtectedRoute } from './components/auth/ProtectedRoute';
 import { PublicRoute } from './components/auth/PublicRoute';
 import { Toaster } from 'sonner';
+import { useSocket } from './hooks/useSocket';
 
 // Create QueryClient instance
 const queryClient = new QueryClient({
@@ -27,6 +28,9 @@ const queryClient = new QueryClient({
 });
 
 function App() {
+  // Initialize Socket.IO connection
+  useSocket();
+
   // Check for cookies on page refresh and logout if missing
   useEffect(() => {
     const checkCookiesOnRefresh = async () => {

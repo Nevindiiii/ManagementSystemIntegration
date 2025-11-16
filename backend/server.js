@@ -2,6 +2,8 @@ import express from "express";
 import cors from "cors";
 import dotenv from "dotenv";
 import cookieParser from "cookie-parser";
+import { createServer } from "http";
+import { Server } from "socket.io";
 import connectDB from "./config/db.js";
 import userRoutes from "./Routes/usersRoutes.js";
 import authRoutes from "./Routes/authRoutes.js";
@@ -9,6 +11,7 @@ import protectedRoutes from "./Routes/protectedRoutes.js";
 
 dotenv.config();
 const app = express();
+const httpServer = createServer(app);
 
 // Correct, simplified CORS setup
 const allowedOrigins = [
@@ -16,6 +19,26 @@ const allowedOrigins = [
   "http://localhost:5174",
   "http://localhost:3000",
 ];
+
+// Socket.IO setup
+const io = new Server(httpServer, {
+  cors: {
+    origin: allowedOrigins,
+    credentials: true,
+  },
+});
+
+// Socket.IO connection handling
+io.on("connection", (socket) => {
+  console.log("✅ Client connected:", socket.id);
+
+  socket.on("disconnect", () => {
+    console.log("❌ Client disconnected:", socket.id);
+  });
+});
+
+// Make io accessible to routes
+app.set("io", io);
 
 app.use(
   cors({
@@ -70,4 +93,4 @@ app.use("/api", (req, res) => {
 });
 
 const PORT = process.env.PORT || 5000;
-app.listen(PORT, () => console.log(` Server running on port ${PORT}`));
+httpServer.listen(PORT, () => console.log(` Server running on port ${PORT}`));
