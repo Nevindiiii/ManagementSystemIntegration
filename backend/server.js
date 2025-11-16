@@ -3,14 +3,14 @@ import cors from "cors";
 import dotenv from "dotenv";
 import cookieParser from "cookie-parser";
 import connectDB from "./config/db.js";
-import userRoutes from "./routes/usersRoutes.js";
-import authRoutes from "./routes/authRoutes.js";
-import protectedRoutes from "./routes/protectedRoutes.js";
+import userRoutes from "./Routes/usersRoutes.js";
+import authRoutes from "./Routes/authRoutes.js";
+import protectedRoutes from "./Routes/protectedRoutes.js";
 
 dotenv.config();
 const app = express();
 
-// ✅ Correct, simplified CORS setup
+// Correct, simplified CORS setup
 const allowedOrigins = [
   "http://localhost:5173",
   "http://localhost:5174",
@@ -45,14 +45,14 @@ app.options(/.*/, (req, res) => {
 });
 
 
-// ✅ Middlewares
+// Middlewares
 app.use(express.json());
 app.use(cookieParser());
 
-// ✅ Connect DB
+// Connect DB
 connectDB();
 
-// ✅ Routes
+// Routes
 app.use("/api/users", userRoutes);
 app.use("/api/auth", authRoutes);
 app.use("/api/protected", protectedRoutes);
@@ -61,7 +61,7 @@ app.get("/", (req, res) => {
   res.send("Server is running");
 });
 
-// ✅ 404 handler
+// 404 handler
 app.use("/api", (req, res) => {
   res.status(404).json({
     success: false,

@@ -4,7 +4,7 @@ import { User } from '@/components/data-table/columns';
 // Base API configuration
 const API_BASE_URL = `${import.meta.env.VITE_API_BASE_URL || 'http://localhost:5000/api'}/users`;
 
-// User API functions with React Query integration
+// User API functions 
 export async function fetchUsers(): Promise<User[]> {
 	const res = await axios.get(API_BASE_URL);
 	const users: User[] = res.data.users.map((user: any) => ({
@@ -66,7 +66,7 @@ export async function deleteUser(id: number): Promise<void> {
 	await axios.delete(`${API_BASE_URL}/${id}`);
 }
 
-// Export individual functions for React Query hooks
+
 export const userApi = {
 	fetchUsers,
 	fetchUserById,

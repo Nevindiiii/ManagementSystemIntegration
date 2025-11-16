@@ -22,7 +22,7 @@ const authSchema = new mongoose.Schema({
   }
 }, {
   timestamps: true,
-  collection: 'authusers' // Separate collection for authentication
+  collection: 'authusers'
 });
 
 // Hash password before saving

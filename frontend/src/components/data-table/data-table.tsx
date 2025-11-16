@@ -20,11 +20,11 @@ interface DataTableProps<TData, TValue> {
   onTableChange?: (table: any) => void;
   
   // Column customization props
-  hiddenColumns?: string[]; // Array of column IDs to hide
-  columnOrder?: string[]; // Array of column IDs in desired order
-  customColumns?: ColumnDef<TData, TValue>[]; // Override default columns completely
-  columnWidths?: Record<string, number>; // Custom column widths
-  columnHeaders?: Record<string, string>; // Custom column header names
+  hiddenColumns?: string[]; 
+  columnOrder?: string[]; 
+  customColumns?: ColumnDef<TData, TValue>[]; 
+  columnWidths?: Record<string, number>; 
+  columnHeaders?: Record<string, string>; 
   
   // Visual customization props
   className?: string;

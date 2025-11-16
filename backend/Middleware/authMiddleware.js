@@ -1,5 +1,5 @@
 import jwt from 'jsonwebtoken';
-import AuthUser from '../models/AuthUserModels.js';
+import AuthUser from '../Models/AuthUserModels.js';
 
 // JWT Token generation
 export const generateToken = (user) => {
@@ -87,7 +87,7 @@ export const refreshToken = async (req, res) => {
     
     res.json({
       success: true,
-      token: newToken, // Send new token for frontend decoding
+      token: newToken, // Send new token 
       user: {
         // id: user._id,
         name: user.name,
