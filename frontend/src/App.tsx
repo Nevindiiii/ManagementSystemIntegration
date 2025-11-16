@@ -96,10 +96,7 @@ function App() {
               element={
                 <ProtectedRoute>
                   <Layout>
-                    <div className="mx-5">
-                      <br />
-                      <AdminDashboard />
-                    </div>
+                    <AdminDashboard />
                   </Layout>
                 </ProtectedRoute>
               }
@@ -109,10 +106,7 @@ function App() {
               element={
                 <ProtectedRoute>
                   <Layout>
-                    <div className="mx-5">
-                      <br />
-                      <UsersTable />
-                    </div>
+                    <UsersTable />
                   </Layout>
                 </ProtectedRoute>
               }
@@ -122,10 +116,7 @@ function App() {
               element={
                 <ProtectedRoute>
                   <Layout>
-                    <div className="mx-5">
-                      <br />
-                      <NewlyAddedUsersTable />
-                    </div>
+                    <NewlyAddedUsersTable />
                   </Layout>
                 </ProtectedRoute>
               }

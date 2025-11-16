@@ -76,10 +76,12 @@ export default function UsersTable({ data }: Props) {
   );
 
   return (
-    <div className="">
-      <h2 className="mb-4 text-2xl font-bold">Products Data</h2>
+    <div className="ms-container">
+      <div className="ms-header">
+        <h2>Products</h2>
+      </div>
 
-      <div className="mb-5 flex">
+      <div className="flex justify-between items-center mb-6">
         <Input
           placeholder={productsData ? "Filter products..." : "Filter names..."}
           value={(getColumn(productsData ? 'title' : 'firstName')?.getFilterValue() as string) ?? ''}
@@ -88,7 +90,6 @@ export default function UsersTable({ data }: Props) {
           }
           className="max-w-sm"
         />
-
         <TableColumnsDropdown
           columns={dropdownColumns}
           onToggleColumn={handleToggleColumn}
@@ -118,7 +119,7 @@ export default function UsersTable({ data }: Props) {
         hiddenColumns={["id"]}
       />
 
-      <div className="flex items-center justify-between py-4">
+      <div className="flex items-center justify-between pt-4">
         <div className="flex items-center space-x-2">
           <p className="text-sm font-medium">Rows per page</p>
           <RowsPerPageSelect

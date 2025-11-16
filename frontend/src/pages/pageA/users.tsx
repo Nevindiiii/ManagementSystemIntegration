@@ -123,27 +123,28 @@ export default function NewlyAddedUsersTable({ data, onAddData }: Props) {
   }
 
   return (
-    <div>
-      <h2 className="mb-4 text-2xl font-bold">Users</h2>
+    <div className="ms-container">
+      <div className="ms-header">
+        <h2>Users</h2>
+      </div>
 
-      <div className="flex justify-between">
+      <div className="flex justify-between items-center mb-6">
         <Input
           placeholder="Filter names..."
           value={(getColumn('firstName')?.getFilterValue() as string) ?? ''}
           onChange={(event) =>
             getColumn('firstName')?.setFilterValue?.(event.target.value)
           }
-          className="mb-4 max-w-sm"
+          className="max-w-sm"
         />
 
-        <div className="flex gap-5">
+        <div className="flex gap-3">
           <TableColumnsDropdown table={table} />
-
           <Button 
             onClick={() => setAddOpen(true)}
             disabled={createUserMutation.isPending}
           >
-            {createUserMutation.isPending ? 'Adding...' : 'Add Data'}
+            {createUserMutation.isPending ? 'Adding...' : 'Add User'}
           </Button>
         </div>
       </div>
@@ -171,7 +172,7 @@ export default function NewlyAddedUsersTable({ data, onAddData }: Props) {
         onTableChange={setTable}
       />
 
-      <div className="flex items-center justify-between py-4">
+      <div className="flex items-center justify-between pt-4">
         <div className="flex items-center space-x-2">
           <p className="text-sm font-medium">Rows per page</p>
           <RowsPerPageSelect
@@ -180,7 +181,6 @@ export default function NewlyAddedUsersTable({ data, onAddData }: Props) {
             className="h-8 w-[70px]"
           />
         </div>
-
         <DataTablePagination
           data={allUsers}
           pageSize={pageSize}

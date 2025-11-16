@@ -47,18 +47,16 @@ export function AppSidebar() {
   
 
   return (
-    <Sidebar className="border-r-0 w-16" collapsible="none">
-      <SidebarContent className="bg-white text-black">
-        {/* Header with black accent */}
-        <SidebarHeader className="border-b border-gray-200 p-3">
+    <Sidebar className="w-16" collapsible="none">
+      <SidebarContent>
+        <SidebarHeader className="border-b p-3">
           <div className="flex items-center justify-center">
-            <div className="w-6 h-6 bg-black rounded-md flex items-center justify-center">
+            <div className="w-6 h-6 bg-primary rounded-md flex items-center justify-center">
               <div className="w-3 h-3 bg-white rounded-sm"></div>
             </div>
           </div>
         </SidebarHeader>
 
-        {/* Navigation Menu */}
         <SidebarGroup className="flex-1 p-0">
           <SidebarGroupContent>
             <SidebarMenu className="space-y-2 px-2 py-4">
@@ -78,11 +76,10 @@ export function AppSidebar() {
                         }
                       }}
                       className={`
-                        w-12 h-12 flex items-center justify-center rounded-lg transition-all duration-200
-                        hover:bg-blue-50 
+                        w-12 h-12 flex items-center justify-center rounded-lg
                         ${isActive 
-                          ? 'bg-black text-white shadow-lg' 
-                          : 'text-black hover:text-blue-600'
+                          ? 'bg-primary text-primary-foreground' 
+                          : 'hover:bg-accent hover:text-accent-foreground'
                         }
                       `}
                       tooltip={item.title}

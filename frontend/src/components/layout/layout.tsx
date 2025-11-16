@@ -13,19 +13,11 @@ type LayoutProps = {
 };
 
 const MainContent = ({ children }: { children: ReactNode }) => {
-  const { open, isMobile } = useSidebar();
-
   return (
-    <SidebarInset
-      className="transition-all duration-300 ease-in-out"
-      style={{
-        marginLeft: !isMobile && open ? '11rem' : '4rem',
-        width: !isMobile && open ? 'calc(100vw - 11rem)' : '100vw',
-      }}
-    >
+    <SidebarInset className="ms-page">
       <LayoutHeader />
-      <main className="min-h-screen p-6">
-        <div className="w-full max-w-full overflow-x-auto">{children}</div>
+      <main className="ms-container">
+        {children}
       </main>
     </SidebarInset>
   );
