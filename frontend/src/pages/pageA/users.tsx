@@ -8,7 +8,6 @@ import { DataTablePagination } from '@/components/customUi/pagination';
 import { Button } from '@/components/ui/button';
 import { UserForm } from '@/components/form/add-post-form';
 import TableColumnsDropdown from '@/components/data-table/table-columns-dropdown';
-import SuccessAlert from '@/components/customUi/success-alert';
 import UsersTable from './tables/table-columns/users-table';
 import { toast } from 'sonner';
 import { Trash2 } from 'lucide-react';
@@ -26,7 +25,7 @@ export default function NewlyAddedUsersTable({ data, onAddData }: Props) {
   const deleteUserMutation = useDeleteUser();
   
   const [addOpen, setAddOpen] = React.useState(false);
-  const [successOpen, setSuccessOpen] = React.useState(false);
+  
   const [deleteOpen, setDeleteOpen] = React.useState(false);
   const [isDeleting, setIsDeleting] = React.useState(false);
 
@@ -189,6 +188,7 @@ export default function NewlyAddedUsersTable({ data, onAddData }: Props) {
           <Button 
             onClick={() => setAddOpen(true)}
             disabled={createUserMutation.isPending}
+            className="bg-black text-white hover:bg-gray-800"
           >
             {createUserMutation.isPending ? 'Adding...' : 'Add User'}
           </Button>
@@ -203,7 +203,7 @@ export default function NewlyAddedUsersTable({ data, onAddData }: Props) {
           try {
             await handleAdd(d as User);
             setAddOpen(false);
-            setSuccessOpen(true);
+           
           } catch (error) {
             // Error handling - could show error message
             console.error('Error creating user:', error);

@@ -202,7 +202,7 @@ export function CustomForm({ initialData, isEdit, nextId, onSubmit, onOpenChange
 
 			{/* Actions */}
 			<div className="flex items-center gap-3 pt-2">
-				<Button type="submit" className="flex-1">
+				<Button type="submit" className="flex-1 bg-black hover:gray-700">
 					{isEdit ? 'Update User' : 'Create User'}
 				</Button>
 				<Button

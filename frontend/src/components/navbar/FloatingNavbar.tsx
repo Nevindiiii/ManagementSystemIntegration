@@ -20,13 +20,13 @@ export function FloatingNavbar() {
     <>
       <div className="fixed top-2 left-6 z-50">
         <div
-          className={`rounded-full bg-white shadow-2xl transition-all duration-300 ease-out dark:bg-gray-900 ${isExpanded ? 'px-3 py-3' : 'p-4'} `}
+          className={`rounded-full bg-white shadow-2xl transition-all duration-300 ease-out ${isExpanded ? 'px-3 py-3' : 'p-4'} `}
         >
           <div className="flex flex-col items-center gap-2">
             <button
               type="button"
               onClick={() => setIsExpanded(!isExpanded)}
-              className="flex h-8 w-8 items-center justify-center text-gray-700 transition-transform hover:scale-110 dark:text-gray-200"
+              className="flex h-8 w-8 items-center justify-center text-black transition-transform hover:scale-110"
               title="Toggle Menu"
               aria-label="Toggle navigation menu"
             >
@@ -52,8 +52,8 @@ export function FloatingNavbar() {
                       }}
                       className={`flex h-12 w-12 items-center justify-center rounded-full transition-all duration-200 ${
                         isActive
-                          ? 'bg-primary scale-110 text-white'
-                          : 'text-gray-700 hover:bg-gray-100 dark:text-gray-200 dark:hover:bg-gray-800'
+                          ? 'bg-black scale-110 text-white'
+                          : 'text-black hover:bg-gray-100'
                       } `}
                       title={item.title}
                     >

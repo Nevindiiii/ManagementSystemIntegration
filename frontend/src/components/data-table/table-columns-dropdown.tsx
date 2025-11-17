@@ -19,8 +19,7 @@ export function TableColumnsDropdown({ table, columns, onToggleColumn }: Props) 
   // object we sometimes pass from parent (which may contain a `table` field)
   const realTable = table?.table ?? table;
 
-  // If a table is provided, use its columns and visibility API.
-  // Otherwise, fall back to the provided columns + onToggleColumn callback.
+
   const allColumnsFromTable = (realTable?.getAllColumns?.() ?? []).filter(
     (column: any) => column.getCanHide?.()
   );
