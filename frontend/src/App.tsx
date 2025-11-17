@@ -10,6 +10,7 @@ import NotFound from './pages/NotFound/NotFound';
 import LoginPage from './pages/auth/loging';
 import SignupPage from './pages/auth/signup';
 import UserProfile from './components/user-profile/profile';
+import SettingsPage from './pages/settings/Settings';
 import ErrorBoundary from './components/ErrorBoundary';
 import { AuthProvider } from './contexts/AuthContext';
 import { ProtectedRoute } from './components/auth/ProtectedRoute';
@@ -131,6 +132,16 @@ function App() {
                 <ProtectedRoute>
                   <Layout>
                     <UserProfile />
+                  </Layout>
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/settings"
+              element={
+                <ProtectedRoute>
+                  <Layout>
+                    <SettingsPage />
                   </Layout>
                 </ProtectedRoute>
               }

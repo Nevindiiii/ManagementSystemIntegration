@@ -8,6 +8,7 @@ import connectDB from "./config/db.js";
 import userRoutes from "./Routes/usersRoutes.js";
 import authRoutes from "./Routes/authRoutes.js";
 import protectedRoutes from "./Routes/protectedRoutes.js";
+import settingsRoutes from "./Routes/settingsRoutes.js";
 
 dotenv.config();
 const app = express();
@@ -79,6 +80,7 @@ connectDB();
 app.use("/api/users", userRoutes);
 app.use("/api/auth", authRoutes);
 app.use("/api/protected", protectedRoutes);
+app.use("/api/settings", settingsRoutes);
 
 app.get("/", (req, res) => {
   res.send("Server is running");
