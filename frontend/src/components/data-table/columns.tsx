@@ -83,17 +83,24 @@ function ActionsCell({ user }: { user: User }) {
   const updateUserMutation = useUpdateUser();
   const deleteUserMutation = useDeleteUser();
 
-  const handleDeleteClick = () => setDeleteOpen(true);
+  const handleDeleteClick = () => {
+    console.log('Delete clicked for user:', user);
+    setDeleteOpen(true);
+  };
 
   const handleConfirmDelete = async () => {
+    if (!user?.id) {
+      console.error('Cannot delete user: ID is undefined');
+      setDeleteOpen(false);
+      return;
+    }
+    
     setIsDeleting(true);
     try {
-      // Always delete from backend since we're using consistent number IDs
       await deleteUserMutation.mutateAsync(user.id);
       setDeleteOpen(false);
     } catch (error) {
       console.error('Failed to delete user:', error);
-      // Fallback to local store removal if backend fails
       try {
         await Promise.resolve(removePost(user.id));
         setDeleteOpen(false);
@@ -145,7 +152,8 @@ function ActionsCell({ user }: { user: User }) {
           size="sm"
           onClick={handleDeleteClick}
           className="h-8 w-8 p-0 text-red-600 hover:text-red-800"
-          disabled={deleteUserMutation.isPending}
+          disabled={deleteUserMutation.isPending || !user?.id}
+          title={!user?.id ? 'Cannot delete: Invalid user ID' : 'Delete user'}
         >
           <Trash2 className="h-4 w-4" />
         </Button>

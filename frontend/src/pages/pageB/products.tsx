@@ -3,11 +3,9 @@ import RowsPerPageSelect from '@/components/customUi/rows-per-page-select';
 import React from 'react';
 import { columns, User } from '@/components/data-table/columns';
 import { productColumns } from '@/pages/pageB/tables/table-columns/product-columns';
-import { useUsers } from '@/hooks/useUserQueries';
 import { useProducts } from '@/hooks/useProductQueries';
 import { Input } from '@/components/ui/input';
 import TableColumnsDropdown from '@/components/data-table/table-columns-dropdown';
-import SuccessAlert from '@/components/customUi/success-alert';
 import { DataTable } from '@/components/data-table/data-table';
 
 type Props = {
@@ -15,43 +13,43 @@ type Props = {
 };
 
 export default function UsersTable({ data }: Props) {
-  const { data: apiData } = useUsers();
-  const { data: productsData } = useProducts();
+  const [currentPage, setCurrentPage] = React.useState(1);
+  const [pageSize, setPageSize] = React.useState(10);
+  
+  const skip = (currentPage - 1) * pageSize;
+  const { data: productsResponse } = useProducts(skip, pageSize);
   const [table, setTable] = React.useState<any | null>(null);
-  const [successOpen, setSuccessOpen] = React.useState(false);
 
-  // State for data-based pagination
-  const [currentPage, setCurrentPage] = React.useState(0);
-  const [pageSize] = React.useState(10);
-
-  // Get the actual data array for pagination - prioritize products data
-  const actualData = productsData ?? data ?? apiData ?? [];
+  const productsData = productsResponse?.products || [];
+  const totalProducts = productsResponse?.total || 0;
+  const totalPages = Math.ceil(totalProducts / pageSize);
+  
+  const actualData = productsData ?? data ?? [];
 
   // helper to support both the raw TanStack table instance and the
   // wrapper API object we pass from DataTable (which contains a `table` field).
 
   const getColumn = React.useCallback(
     (id: string) => {
-      if (!table) return undefined;
+      if (!table || !actualData.length) return undefined;
       if (typeof table.getColumn === 'function') return table.getColumn(id);
       if (table.table && typeof table.table.getColumn === 'function')
         return table.table.getColumn(id);
       return undefined;
     },
-    [table]
+    [table, actualData.length]
   );
 
   // Build a lightweight columns array for the dropdown and a toggle handler
   const dropdownColumns = React.useMemo(() => {
-    const currentColumns = productsData ? productColumns : columns;
+    if (!table || !actualData.length) return [];
+    const currentColumns = productsData.length > 0 ? productColumns : columns;
     return currentColumns.map((col: any) => {
       const id = col.id ?? col.accessorKey;
       const label = typeof col.header === 'string' ? col.header : id;
-      const isVisible = getColumn(id)?.getIsVisible?.() ?? true;
-      return { id, label, isVisible };
+      return { id, label, isVisible: true };
     });
-    // include `table` because visibility is read from it when available
-  }, [columns, productColumns, table, getColumn, productsData]);
+  }, [columns, productColumns, table, actualData.length, productsData.length]);
 
   const handleToggleColumn = React.useCallback(
     (id: string, visible: boolean) => {
@@ -82,21 +80,23 @@ export default function UsersTable({ data }: Props) {
       </div>
 
       <div className="flex justify-between items-center mb-6">
-        <Input
-          placeholder={productsData ? "Filter products..." : "Filter names..."}
-          value={(getColumn(productsData ? 'title' : 'firstName')?.getFilterValue() as string) ?? ''}
-          onChange={(event) =>
-            getColumn(productsData ? 'title' : 'firstName')?.setFilterValue?.(event.target.value)
-          }
-          className="max-w-sm"
-        />
-        <TableColumnsDropdown
-          columns={dropdownColumns}
-          onToggleColumn={handleToggleColumn}
-        />
+        {table && (
+          <Input
+            placeholder={productsData.length > 0 ? "Filter products..." : "Filter names..."}
+            value={(getColumn(productsData.length > 0 ? 'title' : 'firstName')?.getFilterValue() as string) ?? ''}
+            onChange={(event) =>
+              getColumn(productsData.length > 0 ? 'title' : 'firstName')?.setFilterValue?.(event.target.value)
+            }
+            className="max-w-sm"
+          />
+        )}
+        {table && dropdownColumns.length > 0 && (
+          <TableColumnsDropdown
+            columns={dropdownColumns}
+            onToggleColumn={handleToggleColumn}
+          />
+        )}
       </div>
-
-      {/* <SuccessAlert open={successOpen} onOpenChange={setSuccessOpen} /> */}
 
       <DataTable
         columns={productsData ? productColumns : columns as any}
@@ -123,16 +123,18 @@ export default function UsersTable({ data }: Props) {
         <div className="flex items-center space-x-2">
           <p className="text-sm font-medium">Rows per page</p>
           <RowsPerPageSelect
-            value={`${table?.pageSize ?? 10}`}
-            onValueChange={(value) => table?.setPageSize?.(Number(value))}
+            value={`${pageSize}`}
+            onValueChange={(value) => {
+              setPageSize(Number(value));
+              setCurrentPage(1);
+            }}
             className="h-8 w-[70px]"
           />
         </div>
         <DataTablePagination
-          data={actualData as any}
-          pageSize={pageSize}
-          pageIndex={currentPage}
-          onPageChange={setCurrentPage}
+          pageIndex={currentPage - 1}
+          pageCount={totalPages}
+          onPageChange={(page) => setCurrentPage(page + 1)}
           showPageJump={true}
         />
       </div>

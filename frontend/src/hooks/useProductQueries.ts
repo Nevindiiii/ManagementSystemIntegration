@@ -10,11 +10,11 @@ export const productKeys = {
   detail: (id: number) => [...productKeys.details(), id] as const,
 };
 
-// React Query hooks
-export function useProducts() {
+// React Query hooks with pagination
+export function useProducts(skip = 0, limit = 10) {
   return useQuery({
-    queryKey: productKeys.lists(),
-    queryFn: productApi.fetchProducts,
+    queryKey: [...productKeys.lists(), skip, limit],
+    queryFn: () => productApi.fetchProducts(skip, limit),
     staleTime: 1000 * 60 * 5, // 5 minutes
   });
 }

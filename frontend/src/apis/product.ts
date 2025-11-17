@@ -18,10 +18,10 @@ const API_BASE_URL = import.meta.env.VITE_SECRET_API_BASE_URL || 'https://dummyj
 
 console.log('Secret API URL:', API_BASE_URL);
 
-// Product API functions
-export async function fetchProducts(): Promise<Product[]> {
+// Product API functions with pagination
+export async function fetchProducts(skip = 0, limit = 10): Promise<{ products: Product[], total: number, skip: number, limit: number }> {
   try {
-    const res = await axios.get(API_BASE_URL);
+    const res = await axios.get(`${API_BASE_URL}?limit=${limit}&skip=${skip}`);
     const products: Product[] = res.data.products.map((product: any) => ({
       id: product.id,
       title: product.title || 'N/A',
@@ -32,10 +32,15 @@ export async function fetchProducts(): Promise<Product[]> {
       stock: product.stock || 0,
       description: product.description || 'N/A',
     }));
-    return products;
+    return {
+      products,
+      total: res.data.total || 0,
+      skip: res.data.skip || 0,
+      limit: res.data.limit || limit
+    };
   } catch (error) {
     console.error('Error fetching products:', error);
-    return [];
+    return { products: [], total: 0, skip: 0, limit };
   }
 }
 

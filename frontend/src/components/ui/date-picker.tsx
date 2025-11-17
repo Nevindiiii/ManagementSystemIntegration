@@ -46,6 +46,8 @@ export function DatePicker({
           disabled={(date) => date > new Date()}
           className="rounded-md border shadow-sm"
           captionLayout="dropdown"
+          fromYear={1900}
+          toYear={new Date().getFullYear()}
           initialFocus
         />
       </PopoverContent>

@@ -13,10 +13,10 @@ export const userKeys = {
 };
 
 // React Query hooks
-export function useUsers() {
+export function useUsers(page = 1, limit = 10) {
   return useQuery({
-    queryKey: userKeys.lists(),
-    queryFn: userApi.fetchUsers,
+    queryKey: [...userKeys.lists(), page, limit],
+    queryFn: () => userApi.fetchUsers(page, limit),
     staleTime: 1000 * 60 * 5, // 5 minutes
   });
 }
@@ -30,14 +30,8 @@ export function useCreateUser() {
       // Show success message
       toast.success('User created successfully!');
       
-      // Optimistically update the cache - add to top of list
-      queryClient.setQueryData<User[]>(userKeys.lists(), (old) => {
-        if (!old) return [newUser];
-        return [newUser, ...old];
-      });
-      
-      // Invalidate and refetch
-      queryClient.invalidateQueries({ queryKey: userKeys.lists() });
+      // Invalidate all user queries to refetch with pagination
+      queryClient.invalidateQueries({ queryKey: userKeys.all });
     },
     onError: (error: any) => {
       console.error('Error creating user:', error);
@@ -56,16 +50,8 @@ export function useUpdateUser() {
       // Show success message
       toast.success('User updated successfully!');
       
-      // Optimistically update the cache
-      queryClient.setQueryData<User[]>(userKeys.lists(), (old) => {
-        if (!old) return [updatedUser];
-        return old.map((user) => 
-          user.id === updatedUser.id ? updatedUser : user
-        );
-      });
-      
-      // Invalidate and refetch
-      queryClient.invalidateQueries({ queryKey: userKeys.lists() });
+      // Invalidate all user queries to refetch with pagination
+      queryClient.invalidateQueries({ queryKey: userKeys.all });
     },
     onError: (error: any) => {
       console.error('Error updating user:', error);
@@ -84,14 +70,8 @@ export function useDeleteUser() {
       // Show success message
       toast.success('User deleted successfully!');
       
-      // Optimistically update the cache
-      queryClient.setQueryData<User[]>(userKeys.lists(), (old) => {
-        if (!old) return [];
-        return old.filter((user) => user.id !== deletedId);
-      });
-      
-      // Invalidate and refetch
-      queryClient.invalidateQueries({ queryKey: userKeys.lists() });
+      // Invalidate all user queries to refetch with pagination
+      queryClient.invalidateQueries({ queryKey: userKeys.all });
     },
     onError: (error: any) => {
       console.error('Error deleting user:', error);

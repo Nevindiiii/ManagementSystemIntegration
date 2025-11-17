@@ -21,9 +21,12 @@ import { ActivityChart } from '@/components/customUi/ActivityChart';
 
 export default function AdminDashboard() {
   const navigate = useNavigate();
-  const { data: users = [], isLoading: usersLoading } = useUsers();
-  const { data: products = [], isLoading: productsLoading } = useProducts();
+  const { data: usersResponse, isLoading: usersLoading } = useUsers(1, 100);
+  const { data: productsResponse, isLoading: productsLoading } = useProducts(0, 100);
   const newPosts = usePostStore((s) => s.newPosts);
+  
+  const users = usersResponse?.users || [];
+  const products = productsResponse?.products || [];
 
   // Debug: Log products data
   React.useEffect(() => {
@@ -35,9 +38,9 @@ export default function AdminDashboard() {
   
   // added newly added users
   const combinedUsers = React.useMemo(() => {
-    if (!users) return newPosts ?? [];
+    if (!users || users.length === 0) return newPosts ?? [];
     const existingIds = new Set((newPosts || []).map((p) => p.id));
-    const others = (users || []).filter((u: any) => !existingIds.has(u.id));
+    const others = users.filter((u: any) => !existingIds.has(u.id));
     return [...(newPosts || []), ...others];
   }, [users, newPosts]);
 

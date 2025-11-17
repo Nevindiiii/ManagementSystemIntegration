@@ -20,7 +20,9 @@ type Props = {
 
 export default function NewlyAddedUsersTable({ data, onAddData }: Props) {
   const { newPosts, removePost } = usePostStore();
-  const { data: backendUsers, isLoading, error } = useUsers();
+  const [currentPage, setCurrentPage] = React.useState(1);
+  const [pageSize, setPageSize] = React.useState(10);
+  const { data: response, isLoading, error } = useUsers(currentPage, pageSize);
   const createUserMutation = useCreateUser();
   const deleteUserMutation = useDeleteUser();
   
@@ -39,9 +41,9 @@ export default function NewlyAddedUsersTable({ data, onAddData }: Props) {
   }, [error]);
 
   const [table, setTable] = React.useState<any | null>(null);
-  // pagination state (data-driven)
-  const [currentPage, setCurrentPage] = React.useState(0);
-  const pageSize = 10;
+  
+  const backendUsers = response?.users || [];
+  const pagination = response?.pagination;
 
   // Get selected rows
   const selectedRows = table?.getSelectedRowModel?.()?.rows || [];
@@ -51,7 +53,13 @@ export default function NewlyAddedUsersTable({ data, onAddData }: Props) {
   const handleBulkDelete = async () => {
     setIsDeleting(true);
     try {
-      const selectedUsers = selectedRows.map((row: any) => row.original);
+      const selectedUsers = selectedRows.map((row: any) => row.original).filter((user: any) => user && user.id);
+      
+      if (selectedUsers.length === 0) {
+        toast.error('No valid users selected');
+        setIsDeleting(false);
+        return;
+      }
       
       // Delete each user
       for (const user of selectedUsers) {
@@ -90,21 +98,29 @@ export default function NewlyAddedUsersTable({ data, onAddData }: Props) {
     
     try {
       console.log('Sending user data to backend:', userData);
-      // Save to backend via React Query
       const newUser = await createUserMutation.mutateAsync(userData);
       console.log('User saved successfully to database:', newUser);
-      // Don't add to local store - React Query will handle cache updates
+      // Go to page 1 to see the newly added user
+      setCurrentPage(1);
       return newUser;
     } catch (error: any) {
       console.error('Failed to create user:', error);
       
-      // Handle duplicate ID error specifically
-      if (error?.response?.data?.field === 'id') {
-        console.error('Duplicate ID detected, this should be handled by auto-generation');
-        toast.error(`ID ${error.response.data.value} is already in use. Please try again.`);
+      // Extract error message from backend response
+      const errorMsg = error?.response?.data?.message || error?.message || 'Failed to create user';
+      const errorDetails = error?.response?.data?.errors || [];
+      const missingFields = error?.response?.data?.missingFields || [];
+      
+      // Show detailed error message
+      if (missingFields.length > 0) {
+        toast.error(`Missing fields: ${missingFields.join(', ')}`);
+      } else if (errorDetails.length > 0) {
+        toast.error(`Validation error: ${errorDetails.join(', ')}`);
+      } else {
+        toast.error(errorMsg);
       }
       
-      throw error; // Let the form handle the error
+      throw error;
     }
   };
 
@@ -126,8 +142,13 @@ export default function NewlyAddedUsersTable({ data, onAddData }: Props) {
     return local;
   }, [data, backendUsers, newPosts]);
 
-  // Calculate the next available ID with better checking
+  // Calculate the next available ID - fetch from all users, not just current page
   const getNextId = React.useCallback(() => {
+    // Use total count from pagination to generate next ID
+    if (pagination?.totalUsers) {
+      return pagination.totalUsers + 1;
+    }
+    
     if (!allUsers || allUsers.length === 0) return 1;
     
     // Get all existing IDs and sort them
@@ -138,16 +159,9 @@ export default function NewlyAddedUsersTable({ data, onAddData }: Props) {
     
     if (existingIds.length === 0) return 1;
     
-    // Find the next available ID (handles gaps in sequence)
-    for (let i = 1; i <= existingIds[existingIds.length - 1] + 1; i++) {
-      if (!existingIds.includes(i)) {
-        return i;
-      }
-    }
-    
-    // Fallback: return max + 1
+    // Return max + 1
     return Math.max(...existingIds) + 1;
-  }, [allUsers]);
+  }, [allUsers, pagination]);
 
   if (isLoading) {
     return <div className="p-4">Loading users...</div>;
@@ -228,16 +242,18 @@ export default function NewlyAddedUsersTable({ data, onAddData }: Props) {
         <div className="flex items-center space-x-2">
           <p className="text-sm font-medium">Rows per page</p>
           <RowsPerPageSelect
-            value={`${table?.pageSize ?? 10}`}
-            onValueChange={(value) => table?.setPageSize?.(Number(value))}
+            value={`${pageSize}`}
+            onValueChange={(value) => {
+              setPageSize(Number(value));
+              setCurrentPage(1);
+            }}
             className="h-8 w-[70px]"
           />
         </div>
         <DataTablePagination
-          data={allUsers}
-          pageSize={pageSize}
-          pageIndex={currentPage}
-          onPageChange={setCurrentPage}
+          pageIndex={currentPage - 1}
+          pageCount={pagination?.totalPages || 1}
+          onPageChange={(page) => setCurrentPage(page + 1)}
           showPageJump={true}
         />
       </div>

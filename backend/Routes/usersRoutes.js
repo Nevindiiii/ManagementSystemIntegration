@@ -3,21 +3,38 @@ import User from '../Models/UserModels.js';
 
 const router = express.Router();
 
-// GET all users
+// GET all users with pagination
 router.get('/', async (req, res) => {
   try {
-    const users = await User.find().sort({ createdAt: -1 });
+    const page = parseInt(req.query.page) || 1;
+    const limit = parseInt(req.query.limit) || 10;
+    const skip = (page - 1) * limit;
+    
+    const totalUsers = await User.countDocuments();
+    const users = await User.find()
+      .sort({ createdAt: -1 })
+      .skip(skip)
+      .limit(limit);
+    
     res.json({
       success: true,
       users: users.map(user => ({
-        id: user.id, // Use custom id field
+        id: user.id,
         firstName: user.firstName,
         lastName: user.lastName,
         age: user.age,
         email: user.email,
         phone: user.phone,
-        birthDate: user.birthDate.toISOString().split('T')[0] // Format as YYYY-MM-DD
-      }))
+        birthDate: user.birthDate.toISOString().split('T')[0]
+      })),
+      pagination: {
+        currentPage: page,
+        totalPages: Math.ceil(totalUsers / limit),
+        totalUsers: totalUsers,
+        limit: limit,
+        hasNextPage: page < Math.ceil(totalUsers / limit),
+        hasPrevPage: page > 1
+      }
     });
   } catch (error) {
     console.error('Error fetching users:', error);

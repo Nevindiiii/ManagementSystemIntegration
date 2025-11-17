@@ -5,8 +5,8 @@ import { User } from '@/components/data-table/columns';
 const API_BASE_URL = `${import.meta.env.VITE_API_BASE_URL || 'http://localhost:5000/api'}/users`;
 
 // User API functions 
-export async function fetchUsers(): Promise<User[]> {
-	const res = await axios.get(API_BASE_URL);
+export async function fetchUsers(page = 1, limit = 10): Promise<{ users: User[], pagination: any }> {
+	const res = await axios.get(`${API_BASE_URL}?page=${page}&limit=${limit}`);
 	const users: User[] = res.data.users.map((user: any) => ({
 		id: user.id,
 		firstName: user.firstName,
@@ -16,7 +16,7 @@ export async function fetchUsers(): Promise<User[]> {
 		phone: user.phone,
 		birthDate: user.birthDate,
 	}));
-	return users;
+	return { users, pagination: res.data.pagination };
 }
 
 export async function fetchUserById(id: number): Promise<User> {
