@@ -22,13 +22,13 @@ export default function UsersTable({ data, onTableChange, isLoading }: Props) {
       
       columnOrder={['select', 'id', 'firstName', 'phone', 'age', 'birthDate', 'actions']}
       columnWidths={{
-        'select': 50,
-        'id': 80,
-        'firstName': 280,
-        'phone': 140,
-        'age': 120,
-        'birthDate': 120,
-        'actions': 120
+        'select': 60,
+        'id': 100,
+        'firstName': 350,
+        'phone': 180,
+        'age': 150,
+        'birthDate': 150,
+        'actions': 150
       }}
       columnHeaders={{
         'firstName': 'User',
@@ -40,7 +40,7 @@ export default function UsersTable({ data, onTableChange, isLoading }: Props) {
       // Visual customization props
       striped={true}
       hoverable={true}
-      size="md"
+      size="lg"
       border={true}
       rounded={true}
       showSuccessAlert={true}

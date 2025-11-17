@@ -121,132 +121,132 @@ export default function AdminDashboard() {
         </div>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-6">
-        <div className="bg-white rounded-lg border p-6 shadow-sm">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
+        <div className="bg-white rounded-xl border p-8 shadow-sm">
           <div className="flex items-center justify-between">
             <div>
-              <p className="text-muted-foreground text-sm mb-1">Total Users</p>
+              <p className="text-muted-foreground text-base mb-2">Total Users</p>
               {usersLoading ? (
-                <div className="w-16 h-8 bg-muted rounded animate-pulse mb-2"></div>
+                <div className="w-20 h-10 bg-muted rounded animate-pulse mb-3"></div>
               ) : (
-                <p className="text-2xl font-bold mb-2">
+                <p className="text-4xl font-bold mb-3">
                   {combinedUsers.length}
                 </p>
               )}
-              <p className="text-green-600 text-sm flex items-center">
-                <TrendingUp className="w-3 h-3 mr-1" />
+              <p className="text-green-600 text-base flex items-center">
+                <TrendingUp className="w-4 h-4 mr-1" />
                 +12% from last month
               </p>
             </div>
-            <div className="p-3 bg-primary rounded-lg">
-              <Users className="w-5 h-5 text-primary-foreground" />
+            <div className="p-4 bg-primary rounded-xl">
+              <Users className="w-7 h-7 text-primary-foreground" />
             </div>
           </div>
         </div>
 
-        <div className="bg-white rounded-lg border p-6 shadow-sm">
+        <div className="bg-white rounded-xl border p-8 shadow-sm">
           <div className="flex items-center justify-between">
             <div>
-              <p className="text-muted-foreground text-sm mb-1">Products</p>
+              <p className="text-muted-foreground text-base mb-2">Products</p>
               {productsLoading ? (
-                <div className="w-16 h-8 bg-muted rounded animate-pulse mb-2"></div>
+                <div className="w-20 h-10 bg-muted rounded animate-pulse mb-3"></div>
               ) : (
-                <p className="text-2xl font-bold mb-2">
+                <p className="text-4xl font-bold mb-3">
                   {products.length}
                 </p>
               )}
-              <p className="text-green-600 text-sm flex items-center">
-                <Package className="w-3 h-3 mr-1" />
+              <p className="text-green-600 text-base flex items-center">
+                <Package className="w-4 h-4 mr-1" />
                 Live from API
               </p>
             </div>
-            <div className="p-3 bg-green-600 rounded-lg">
-              <Package className="w-5 h-5 text-white" />
+            <div className="p-4 bg-green-600 rounded-xl">
+              <Package className="w-7 h-7 text-white" />
             </div>
           </div>
         </div>
 
-        <div className="bg-white rounded-lg border p-6 shadow-sm">
+        <div className="bg-white rounded-xl border p-8 shadow-sm">
           <div className="flex items-center justify-between">
             <div>
-              <p className="text-muted-foreground text-sm mb-1">Today's New Users</p>
+              <p className="text-muted-foreground text-base mb-2">Today's New Users</p>
               {usersLoading ? (
-                <div className="w-16 h-8 bg-muted rounded animate-pulse mb-2"></div>
+                <div className="w-20 h-10 bg-muted rounded animate-pulse mb-3"></div>
               ) : (
-                <p className="text-2xl font-bold mb-2">
+                <p className="text-4xl font-bold mb-3">
                   {todaysNewUsers.length}
                 </p>
               )}
-              <p className="text-blue-600 text-sm flex items-center">
-                <Calendar className="w-3 h-3 mr-1" />
+              <p className="text-blue-600 text-base flex items-center">
+                <Calendar className="w-4 h-4 mr-1" />
                 Added today
               </p>
             </div>
-            <div className="p-3 bg-purple-600 rounded-lg">
-              <UserPlus className="w-5 h-5 text-white" />
+            <div className="p-4 bg-purple-600 rounded-xl">
+              <UserPlus className="w-7 h-7 text-white" />
             </div>
           </div>
         </div>
 
-        <div className="bg-white rounded-lg border p-6 shadow-sm">
+        <div className="bg-white rounded-xl border p-8 shadow-sm">
           <div className="flex items-center justify-between">
             <div>
-              <p className="text-muted-foreground text-sm mb-1">User Age Range</p>
+              <p className="text-muted-foreground text-base mb-2">User Age Range</p>
               {usersLoading ? (
-                <div className="w-16 h-8 bg-muted rounded animate-pulse mb-2"></div>
+                <div className="w-20 h-10 bg-muted rounded animate-pulse mb-3"></div>
               ) : (
-                <p className="text-2xl font-bold mb-2">
+                <p className="text-4xl font-bold mb-3">
                   {ageRange.min}-{ageRange.max}
                 </p>
               )}
-              <p className="text-orange-600 text-sm flex items-center">
-                <Activity className="w-3 h-3 mr-1" />
+              <p className="text-orange-600 text-base flex items-center">
+                <Activity className="w-4 h-4 mr-1" />
                 Avg: {ageRange.avg} years
               </p>
             </div>
-            <div className="p-3 bg-orange-600 rounded-lg">
-              <Users className="w-5 h-5 text-white" />
+            <div className="p-4 bg-orange-600 rounded-xl">
+              <Users className="w-7 h-7 text-white" />
             </div>
           </div>
         </div>
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        <div className="lg:col-span-2 bg-white rounded-lg border p-6 shadow-sm">
-          <div className="flex items-center justify-between mb-6">
-            <h3 className="flex items-center">
-              <div className="p-2 bg-purple-100 rounded-lg mr-3">
-                <Activity className="w-5 h-5 text-purple-600" />
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
+        <div className="lg:col-span-2 bg-white rounded-xl border p-8 shadow-sm">
+          <div className="flex items-center justify-between mb-8">
+            <h3 className="flex items-center text-xl font-semibold">
+              <div className="p-3 bg-purple-100 rounded-xl mr-4">
+                <Activity className="w-6 h-6 text-purple-600" />
               </div>
               Product Analytics
             </h3>
-            <p className="text-sm text-muted-foreground">Price distribution overview</p>
+            <p className="text-base text-muted-foreground">Price distribution overview</p>
           </div>
           <ActivityChart cartData={products} />
         </div>
 
-        <div className="bg-white rounded-lg border p-6 shadow-sm">
-          <div className="flex items-center justify-between mb-6">
-            <h3 className="flex items-center">
-              <div className="p-2 bg-blue-100 rounded-lg mr-3">
-                <Clock className="w-5 h-5 text-blue-600" />
+        <div className="bg-white rounded-xl border p-8 shadow-sm">
+          <div className="flex items-center justify-between mb-8">
+            <h3 className="flex items-center text-xl font-semibold">
+              <div className="p-3 bg-blue-100 rounded-xl mr-4">
+                <Clock className="w-6 h-6 text-blue-600" />
               </div>
               Recent Activity
             </h3>
-            <p className="text-sm text-muted-foreground">Live updates</p>
+            <p className="text-base text-muted-foreground">Live updates</p>
           </div>
           <div className="space-y-4 max-h-96 overflow-y-auto">
             {recentActivity.length > 0 ? (
               recentActivity.map((activity, index) => {
                 const IconComponent = activity.icon;
                 return (
-                  <div key={index} className="flex items-center space-x-4 p-3 rounded-lg hover:bg-muted/50">
-                    <div className={`p-2 rounded-full ${activity.bgColor}`}>
-                      <IconComponent className={`w-4 h-4 ${activity.color}`} />
+                  <div key={index} className="flex items-center space-x-4 p-4 rounded-xl hover:bg-muted/50">
+                    <div className={`p-3 rounded-full ${activity.bgColor}`}>
+                      <IconComponent className={`w-5 h-5 ${activity.color}`} />
                     </div>
                     <div className="flex-1">
-                      <p className="text-sm font-medium">{activity.title}</p>
-                      <p className="text-xs text-muted-foreground">{activity.time}</p>
+                      <p className="text-base font-medium">{activity.title}</p>
+                      <p className="text-sm text-muted-foreground">{activity.time}</p>
                     </div>
                   </div>
                 );
@@ -254,7 +254,7 @@ export default function AdminDashboard() {
             ) : (
               <div className="text-center py-8 text-muted-foreground">
                 <Activity className="w-8 h-8 mx-auto mb-2 opacity-50" />
-                <p>No recent activity</p>
+                <p className="text-base">No recent activity</p>
               </div>
             )}
           </div>

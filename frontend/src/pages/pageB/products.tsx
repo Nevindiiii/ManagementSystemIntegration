@@ -121,6 +121,7 @@ export default function UsersTable({ data }: Props) {
             stock: "Stock"
           }}
           hiddenColumns={["id"]}
+          size="lg"
         />
       )}
 
