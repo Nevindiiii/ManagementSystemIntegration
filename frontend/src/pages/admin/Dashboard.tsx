@@ -16,6 +16,7 @@ import { useProducts } from '@/hooks/useProductQueries';
 import { usePostStore } from '@/store/postStore';
 import { Button } from '@/components/ui/button';
 import { ActivityChart } from '@/components/customUi/ActivityChart';
+import { CategoryChart } from '@/components/customUi/CategoryChart';
 
 
 
@@ -211,20 +212,37 @@ export default function AdminDashboard() {
         </div>
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
-        <div className="lg:col-span-2 bg-white rounded-xl border p-8 shadow-sm">
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 mb-4">
+        <div className="bg-white rounded-xl border p-8 shadow-sm">
           <div className="flex items-center justify-between mb-8">
+            <h3 className="flex items-center text-xl font-semibold">
+              <div className="p-3 bg-blue-100 rounded-xl mr-4">
+                <BarChart2 className="w-6 h-6 text-blue-600" />
+              </div>
+              Category Breakdown
+            </h3>
+            <p className="text-base text-muted-foreground">Product categories</p>
+          </div>
+          <CategoryChart products={products} />
+        </div>
+
+        <div className="bg-white rounded-xl border p-8 shadow-sm">
+          <div className="flex items-center justify-between mb-6">
             <h3 className="flex items-center text-xl font-semibold">
               <div className="p-3 bg-purple-100 rounded-xl mr-4">
                 <Activity className="w-6 h-6 text-purple-600" />
               </div>
               Product Analytics
             </h3>
-            <p className="text-base text-muted-foreground">Price distribution overview</p>
+            <p className="text-base text-muted-foreground">Price distribution</p>
           </div>
-          <ActivityChart cartData={products} />
+          <div className="flex justify-center mb-6">
+            <ActivityChart cartData={products} />
+          </div>
         </div>
+      </div>
 
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
         <div className="bg-white rounded-xl border p-8 shadow-sm">
           <div className="flex items-center justify-between mb-8">
             <h3 className="flex items-center text-xl font-semibold">
@@ -257,6 +275,78 @@ export default function AdminDashboard() {
                 <p className="text-base">No recent activity</p>
               </div>
             )}
+          </div>
+        </div>
+
+        <div className="bg-white rounded-xl border p-8 shadow-sm">
+          <div className="flex items-center justify-between mb-8">
+            <h3 className="flex items-center text-xl font-semibold">
+              <div className="p-3 bg-green-100 rounded-xl mr-4">
+                <TrendingUp className="w-6 h-6 text-green-600" />
+              </div>
+              Quick Stats
+            </h3>
+          </div>
+          <div className="space-y-6">
+            <div className="flex items-center justify-between p-4 bg-blue-50 rounded-xl">
+              <div>
+                <p className="text-sm text-gray-600">Total Categories</p>
+                <p className="text-2xl font-bold text-blue-700">{new Set(products.map(p => p.category)).size}</p>
+              </div>
+              <BarChart2 className="w-8 h-8 text-blue-600" />
+            </div>
+            <div className="flex items-center justify-between p-4 bg-purple-50 rounded-xl">
+              <div>
+                <p className="text-sm text-gray-600">Avg Product Price</p>
+                <p className="text-2xl font-bold text-purple-700">
+                  ${products.length > 0 ? (products.reduce((sum, p) => sum + p.price, 0) / products.length).toFixed(2) : '0.00'}
+                </p>
+              </div>
+              <Package className="w-8 h-8 text-purple-600" />
+            </div>
+            <div className="flex items-center justify-between p-4 bg-orange-50 rounded-xl">
+              <div>
+                <p className="text-sm text-gray-600">Total Stock</p>
+                <p className="text-2xl font-bold text-orange-700">
+                  {products.reduce((sum, p) => sum + (p.stock || 0), 0)}
+                </p>
+              </div>
+              <Package className="w-8 h-8 text-orange-600" />
+            </div>
+          </div>
+        </div>
+
+        <div className="bg-white rounded-xl border p-8 shadow-sm">
+          <div className="flex items-center justify-between mb-8">
+            <h3 className="flex items-center text-xl font-semibold">
+              <div className="p-3 bg-amber-100 rounded-xl mr-4">
+                <Users className="w-6 h-6 text-amber-600" />
+              </div>
+              User Insights
+            </h3>
+          </div>
+          <div className="space-y-6">
+            <div className="flex items-center justify-between p-4 bg-green-50 rounded-xl">
+              <div>
+                <p className="text-sm text-gray-600">Active Users</p>
+                <p className="text-2xl font-bold text-green-700">{combinedUsers.length}</p>
+              </div>
+              <Users className="w-8 h-8 text-green-600" />
+            </div>
+            <div className="flex items-center justify-between p-4 bg-blue-50 rounded-xl">
+              <div>
+                <p className="text-sm text-gray-600">New Today</p>
+                <p className="text-2xl font-bold text-blue-700">{todaysNewUsers.length}</p>
+              </div>
+              <UserPlus className="w-8 h-8 text-blue-600" />
+            </div>
+            <div className="flex items-center justify-between p-4 bg-indigo-50 rounded-xl">
+              <div>
+                <p className="text-sm text-gray-600">Avg Age</p>
+                <p className="text-2xl font-bold text-indigo-700">{ageRange.avg} years</p>
+              </div>
+              <Activity className="w-8 h-8 text-indigo-600" />
+            </div>
           </div>
         </div>
       </div>

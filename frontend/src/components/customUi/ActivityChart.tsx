@@ -94,9 +94,9 @@ export const ActivityChart = ({ cartData }: ActivityChartProps) => {
 
   return (
     <div>
-      <div className="flex flex-col gap-6 lg:flex-row">
+      <div className="flex flex-col-reverse gap-4 lg:flex-row">
         {/* Interactive Radial Chart */}
-        <div className="flex flex-1 justify-center">
+        <div className="flex flex-1 justify-center lg:order-first">
           <svg width="240" height="240" className="overflow-visible">
             {/* Background circle */}
             <circle
@@ -198,7 +198,7 @@ export const ActivityChart = ({ cartData }: ActivityChartProps) => {
         </div>
 
         {/* Legend and Stats */}
-        <div className="flex-1 space-y-4">
+        <div className="flex-1 space-y-3">
           {/* Interactive Legend */}
           <div className="space-y-2">
             <h3 className="mb-3 text-sm font-semibold text-gray-700">
