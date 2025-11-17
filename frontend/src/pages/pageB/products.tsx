@@ -7,6 +7,7 @@ import { useProducts } from '@/hooks/useProductQueries';
 import { Input } from '@/components/ui/input';
 import TableColumnsDropdown from '@/components/data-table/table-columns-dropdown';
 import { DataTable } from '@/components/data-table/data-table';
+import Loading from '@/components/customUi/loading';
 
 type Props = {
   data?: User[];
@@ -17,7 +18,7 @@ export default function UsersTable({ data }: Props) {
   const [pageSize, setPageSize] = React.useState(10);
   
   const skip = (currentPage - 1) * pageSize;
-  const { data: productsResponse } = useProducts(skip, pageSize);
+  const { data: productsResponse, isLoading } = useProducts(skip, pageSize);
   const [table, setTable] = React.useState<any | null>(null);
 
   const productsData = productsResponse?.products || [];
@@ -98,26 +99,30 @@ export default function UsersTable({ data }: Props) {
         )}
       </div>
 
-      <DataTable
-        columns={productsData ? productColumns : columns as any}
-        data={actualData as any}
-        onTableChange={setTable}
-        columnHeaders={{
-          name: "Name",
-          username: "Username",
-          phone: "Phone",
-          email: "Email",
-          id: "ID",
-          website: "Website",
-          title: "Product Title",
-          brand: "Brand",
-          category: "Category",
-          price: "Price",
-          rating: "Rating",
-          stock: "Stock"
-        }}
-        hiddenColumns={["id"]}
-      />
+      {isLoading ? (
+        <Loading message="Loading products..." />
+      ) : (
+        <DataTable
+          columns={productsData ? productColumns : columns as any}
+          data={actualData as any}
+          onTableChange={setTable}
+          columnHeaders={{
+            name: "Name",
+            username: "Username",
+            phone: "Phone",
+            email: "Email",
+            id: "ID",
+            website: "Website",
+            title: "Product Title",
+            brand: "Brand",
+            category: "Category",
+            price: "Price",
+            rating: "Rating",
+            stock: "Stock"
+          }}
+          hiddenColumns={["id"]}
+        />
+      )}
 
       <div className="flex items-center justify-between pt-4">
         <div className="flex items-center space-x-2">

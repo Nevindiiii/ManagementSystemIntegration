@@ -1,12 +1,18 @@
 import { columns, User } from '@/components/data-table/columns';
 import { DataTable } from '@/components/data-table/data-table';
+import Loading from '@/components/customUi/loading';
 
 type Props = {
   data: User[];
   onTableChange?: (table: any) => void;
+  isLoading?: boolean;
 };
 
-export default function UsersTable({ data, onTableChange }: Props) {
+export default function UsersTable({ data, onTableChange, isLoading }: Props) {
+  if (isLoading) {
+    return <Loading message="Loading users..." />;
+  }
+  
   return (
     <DataTable
       columns={columns}

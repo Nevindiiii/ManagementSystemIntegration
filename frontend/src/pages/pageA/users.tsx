@@ -12,6 +12,7 @@ import UsersTable from './tables/table-columns/users-table';
 import { toast } from 'sonner';
 import { Trash2 } from 'lucide-react';
 import DeleteAlert from '@/components/customUi/delete-alert';
+import Loading from '@/components/customUi/loading';
 
 type Props = {
   data?: User[];
@@ -164,7 +165,7 @@ export default function NewlyAddedUsersTable({ data, onAddData }: Props) {
   }, [allUsers, pagination]);
 
   if (isLoading) {
-    return <div className="p-4">Loading users...</div>;
+    return <Loading message="Loading users..." />;
   }
 
   if (error) {
@@ -236,6 +237,7 @@ export default function NewlyAddedUsersTable({ data, onAddData }: Props) {
       <UsersTable
         data={allUsers}
         onTableChange={setTable}
+        isLoading={isLoading}
       />
 
       <div className="flex items-center justify-between pt-4">
