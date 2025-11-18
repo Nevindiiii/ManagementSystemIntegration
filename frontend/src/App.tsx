@@ -5,6 +5,7 @@ import { useEffect } from 'react';
 import NewlyAddedUsersTable from './pages/pageA/users';
 import UsersTable from './pages/pageB/products';
 import AdminDashboard from './pages/admin/Dashboard';
+import AuthUsersPage from './pages/authUsers';
 import Layout from './components/layout/layout';
 import NotFound from './pages/NotFound/NotFound';
 import LoginPage from './pages/auth/loging';
@@ -36,15 +37,18 @@ function App() {
   useEffect(() => {
     const checkCookiesOnRefresh = async () => {
       const hasLocalStorageToken = localStorage.getItem('token_data');
-      
+
       if (hasLocalStorageToken) {
         try {
           // Check if httpOnly cookie exists by making a request
-          const response = await fetch('http://localhost:5001/api/auth/verify', {
-            method: 'GET',
-            credentials: 'include'
-          });
-          
+          const response = await fetch(
+            'http://localhost:5001/api/auth/verify',
+            {
+              method: 'GET',
+              credentials: 'include',
+            }
+          );
+
           if (!response.ok) {
             // Cookie missing or invalid - logout
             localStorage.removeItem('token_data');
@@ -79,21 +83,21 @@ function App() {
           />
 
           <Routes>
-            <Route 
-              path="/" 
+            <Route
+              path="/"
               element={
                 <PublicRoute>
                   <LoginPage />
                 </PublicRoute>
-              } 
+              }
             />
-            <Route 
-              path="/signup" 
+            <Route
+              path="/signup"
               element={
                 <PublicRoute>
                   <SignupPage />
                 </PublicRoute>
-              } 
+              }
             />
 
             <Route
@@ -122,6 +126,16 @@ function App() {
                 <ProtectedRoute>
                   <Layout>
                     <NewlyAddedUsersTable />
+                  </Layout>
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/auth-users"
+              element={
+                <ProtectedRoute>
+                  <Layout>
+                    <AuthUsersPage />
                   </Layout>
                 </ProtectedRoute>
               }
