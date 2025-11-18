@@ -39,7 +39,7 @@ function loging({ onLogin }: LogingProps) {
   const [formData, setFormData] = useState<LoginData>({
     email: '',
     password: '',
-    role: 'user',
+    
   });
 
   const [isLoading, setIsLoading] = useState(false);
@@ -190,7 +190,7 @@ function loging({ onLogin }: LogingProps) {
             </div>
 
             {/* Role Select */}
-            <div className="relative">
+            {/* <div className="relative">
               <div
                 className={`flex items-center rounded-2xl border bg-white/60 px-4 py-3 backdrop-blur-sm transition-all`}
               >
@@ -205,7 +205,7 @@ function loging({ onLogin }: LogingProps) {
                   <option value="admin">Admin</option>
                 </select>
               </div>
-            </div>
+            </div> */}
 
             {/* Forgot Password */}
             <div className="text-left">
