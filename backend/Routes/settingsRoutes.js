@@ -1,11 +1,11 @@
 import express from 'express';
 import Settings from '../Models/SettingsModels.js';
-import { protect } from '../Middleware/authMiddleware.js';
+import { verifyToken } from '../Middleware/authMiddleware.js';
 
 const router = express.Router();
 
 // Get user settings
-router.get('/', protect, async (req, res) => {
+router.get('/', verifyToken, async (req, res) => {
   try {
     let settings = await Settings.findOne({ userId: req.user._id });
     
@@ -20,7 +20,7 @@ router.get('/', protect, async (req, res) => {
 });
 
 // Update user settings
-router.put('/', protect, async (req, res) => {
+router.put('/', verifyToken, async (req, res) => {
   try {
     const settings = await Settings.findOneAndUpdate(
       { userId: req.user._id },
