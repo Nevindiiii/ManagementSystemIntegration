@@ -2,7 +2,7 @@ import axios from 'axios';
 import { User } from '@/components/data-table/columns';
 
 // Base API configuration
-const API_BASE_URL = `${import.meta.env.VITE_API_BASE_URL || 'http://localhost:5000/api'}/users`;
+const API_BASE_URL = `${import.meta.env.VITE_API_BASE_URL || 'http://localhost:5001/api'}/users`;
 
 // User API functions 
 export async function fetchUsers(page = 1, limit = 10): Promise<{ users: User[], pagination: any }> {

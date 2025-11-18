@@ -57,7 +57,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   const checkCookieStatus = useCallback(async () => {
     if (user && tokenData) {
       try {
-        const response = await fetch('http://localhost:5000/api/auth/verify', {
+        const response = await fetch('http://localhost:5001/api/auth/verify', {
           method: 'GET',
           credentials: 'include'
         });

@@ -40,7 +40,7 @@ function App() {
       if (hasLocalStorageToken) {
         try {
           // Check if httpOnly cookie exists by making a request
-          const response = await fetch('http://localhost:5000/api/auth/verify', {
+          const response = await fetch('http://localhost:5001/api/auth/verify', {
             method: 'GET',
             credentials: 'include'
           });

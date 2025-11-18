@@ -3,7 +3,7 @@ import axios from 'axios';
 import { useSettingsStore } from '../store/settingsStore';
 import { toast } from 'sonner';
 
-const API_BASE_URL = `${import.meta.env.VITE_API_BASE_URL || 'http://localhost:5000/api'}/settings`;
+const API_BASE_URL = `${import.meta.env.VITE_API_BASE_URL || 'http://localhost:5001/api'}/settings`;
 
 export const useSettings = () => {
   const queryClient = useQueryClient();

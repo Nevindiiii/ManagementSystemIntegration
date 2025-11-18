@@ -3,7 +3,8 @@ import { io, Socket } from 'socket.io-client';
 import { toast } from 'sonner';
 import { useNotificationStore } from '@/store/notificationStore';
 
-const SOCKET_URL = 'http://localhost:5000';
+const SOCKET_URL = 'http://localhost:5001';
+
 
 export const useSocket = () => {
   const socketRef = useRef<Socket | null>(null);
@@ -18,11 +19,11 @@ export const useSocket = () => {
     const socket = socketRef.current;
 
     socket.on('connect', () => {
-      console.log('✅ Connected to server');
+      console.log('Connected to server');
     });
 
     socket.on('disconnect', () => {
-      console.log('❌ Disconnected from server');
+      console.log('Disconnected from server');
     });
 
     // Listen for user added event
