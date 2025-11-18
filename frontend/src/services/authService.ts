@@ -18,6 +18,7 @@ export interface AuthResponse {
 export interface LoginCredentials {
   email: string;
   password: string;
+  role?: string;
 }
 
 export interface RegisterCredentials {
@@ -25,6 +26,7 @@ export interface RegisterCredentials {
   email: string;
   password: string;
   confirmPassword: string;
+  role?: string;
 }
 
 class AuthService {
@@ -80,6 +82,7 @@ class AuthService {
         body: JSON.stringify({
           email: credentials.email,
           password: credentials.password
+          , role: credentials.role
         }),
       });
 

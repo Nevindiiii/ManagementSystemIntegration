@@ -7,17 +7,21 @@ import { toast } from 'sonner';
 
 // Zod schema for login validation
 const loginSchema = z.object({
-  email: z.string()
+  email: z
+    .string()
     .min(1, 'Email is required')
     .email('Please enter a valid email address'),
-  password: z.string()
+  password: z
+    .string()
     .min(1, 'Password is required')
     .min(6, 'Password must be at least 6 characters long'),
+  role: z.enum(['user', 'admin']).optional(),
 });
 
 interface LoginData {
   email: string;
   password: string;
+  role?: 'user' | 'admin';
 }
 
 interface ValidationErrors {
@@ -34,35 +38,38 @@ function loging({ onLogin }: LogingProps) {
   const { login } = useAuth();
   const [formData, setFormData] = useState<LoginData>({
     email: '',
-    password: ''
+    password: '',
+    role: 'user',
   });
-  
+
   const [isLoading, setIsLoading] = useState(false);
   const [errors, setErrors] = useState<ValidationErrors>({});
   const [showPassword, setShowPassword] = useState(false);
 
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const { name, value } = e.target;
-    setFormData(prev => ({
+  const handleInputChange = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
+  ) => {
+    const { name, value } = e.target as HTMLInputElement | HTMLSelectElement;
+    setFormData((prev) => ({
       ...prev,
-      [name]: value
+      [name]: value,
     }));
-    
+
     // Clear error for this field when user starts typing
     if (errors[name as keyof ValidationErrors]) {
-      setErrors(prev => ({
+      setErrors((prev) => ({
         ...prev,
-        [name]: undefined
+        [name]: undefined,
       }));
     }
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    
+
     // Validate form data with Zod
     const result = loginSchema.safeParse(formData);
-    
+
     if (!result.success) {
       const validationErrors: ValidationErrors = {};
       result.error.issues.forEach((issue) => {
@@ -72,29 +79,29 @@ function loging({ onLogin }: LogingProps) {
       setErrors(validationErrors);
       return;
     }
-    
+
     // Clear any existing errors
     setErrors({});
     setIsLoading(true);
-    
+
     try {
       // Call onLogin callback if provided
       if (onLogin) {
         await onLogin(formData);
       }
-      
+
       // Use JWT authentication
       await login({
         email: formData.email,
         password: formData.password,
+        role: formData.role,
       });
-      
+
       // Show success message
       toast.success('Login successful!');
-      
+
       // Navigate to dashboard after successful login
       navigate('/dashboard');
-      
     } catch (error) {
       console.error('Login error:', error);
       toast.error('Login failed. Please check your credentials and try again.');
@@ -104,41 +111,41 @@ function loging({ onLogin }: LogingProps) {
   };
 
   return (
-    <div className="min-h-screen bg-white flex items-center justify-center p-6">
+    <div className="flex min-h-screen items-center justify-center bg-white p-6">
       <div className="w-full max-w-120">
         {/* Login Form Card */}
-        <div className="bg-white/80 backdrop-blur-sm border border-gray-200/50 rounded-3xl shadow-2xl p-8">
+        <div className="rounded-3xl border border-gray-200/50 bg-white/80 p-8 shadow-2xl backdrop-blur-sm">
           {/* Header */}
-          <div className="text-center mb-8">
-            <LogIn className="w-12 h-12 text-black mx-auto mb-4" />
-            <h1 className="text-3xl font-bold text-black mb-2">Login</h1>
-            <p className="text-gray-700 text-sm">Please sign in to continue</p>
+          <div className="mb-8 text-center">
+            <LogIn className="mx-auto mb-4 h-12 w-12 text-black" />
+            <h1 className="mb-2 text-3xl font-bold text-black">Login</h1>
+            <p className="text-sm text-gray-700">Please sign in to continue</p>
           </div>
 
           {/* Login Form */}
           <form onSubmit={handleSubmit} className="space-y-6">
-
-            
             {/* Email Input */}
             <div className="relative">
-              <div className={`flex items-center bg-white/60 backdrop-blur-sm rounded-2xl px-4 py-4 border transition-all ${
-                errors.email 
-                  ? 'border-red-500 focus-within:border-red-500 focus-within:ring-2 focus-within:ring-red-100' 
-                  : 'border-gray-300/50 focus-within:border-black focus-within:ring-2 focus-within:ring-gray-200/50'
-              }`}>
-                <Mail className="w-5 h-5 text-black mr-3" />
+              <div
+                className={`flex items-center rounded-2xl border bg-white/60 px-4 py-4 backdrop-blur-sm transition-all ${
+                  errors.email
+                    ? 'border-red-500 focus-within:border-red-500 focus-within:ring-2 focus-within:ring-red-100'
+                    : 'border-gray-300/50 focus-within:border-black focus-within:ring-2 focus-within:ring-gray-200/50'
+                }`}
+              >
+                <Mail className="mr-3 h-5 w-5 text-black" />
                 <input
                   type="email"
                   name="email"
                   placeholder="Email"
                   value={formData.email}
                   onChange={handleInputChange}
-                  className="flex-1 bg-transparent outline-none text-black placeholder-gray-600"
+                  className="flex-1 bg-transparent text-black placeholder-gray-600 outline-none"
                 />
               </div>
               {errors.email && (
-                <div className="flex items-center mt-1 text-red-500 text-sm">
-                  <AlertCircle className="w-4 h-4 mr-1" />
+                <div className="mt-1 flex items-center text-sm text-red-500">
+                  <AlertCircle className="mr-1 h-4 w-4" />
                   {errors.email}
                 </div>
               )}
@@ -146,41 +153,65 @@ function loging({ onLogin }: LogingProps) {
 
             {/* Password Input */}
             <div className="relative">
-              <div className={`flex items-center bg-white/60 backdrop-blur-sm rounded-2xl px-4 py-4 border transition-all ${
-                errors.password 
-                  ? 'border-red-500 focus-within:border-red-500 focus-within:ring-2 focus-within:ring-red-100' 
-                  : 'border-gray-300/50 focus-within:border-black focus-within:ring-2 focus-within:ring-gray-200/50'
-              }`}>
-                <Lock className="w-5 h-5 text-black mr-3" />
+              <div
+                className={`flex items-center rounded-2xl border bg-white/60 px-4 py-4 backdrop-blur-sm transition-all ${
+                  errors.password
+                    ? 'border-red-500 focus-within:border-red-500 focus-within:ring-2 focus-within:ring-red-100'
+                    : 'border-gray-300/50 focus-within:border-black focus-within:ring-2 focus-within:ring-gray-200/50'
+                }`}
+              >
+                <Lock className="mr-3 h-5 w-5 text-black" />
                 <input
-                  type={showPassword ? "text" : "password"}
+                  type={showPassword ? 'text' : 'password'}
                   name="password"
                   placeholder="Password"
                   value={formData.password}
                   onChange={handleInputChange}
-                  className="flex-1 bg-transparent outline-none text-black placeholder-gray-600"
+                  className="flex-1 bg-transparent text-black placeholder-gray-600 outline-none"
                 />
                 <button
                   type="button"
                   onClick={() => setShowPassword(!showPassword)}
-                  className="text-black hover:text-gray-600 transition-colors ml-2"
+                  className="ml-2 text-black transition-colors hover:text-gray-600"
                 >
-                  {showPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
+                  {showPassword ? (
+                    <EyeOff className="h-5 w-5" />
+                  ) : (
+                    <Eye className="h-5 w-5" />
+                  )}
                 </button>
               </div>
               {errors.password && (
-                <div className="flex items-center mt-1 text-red-500 text-sm">
-                  <AlertCircle className="w-4 h-4 mr-1" />
+                <div className="mt-1 flex items-center text-sm text-red-500">
+                  <AlertCircle className="mr-1 h-4 w-4" />
                   {errors.password}
                 </div>
               )}
             </div>
 
+            {/* Role Select */}
+            <div className="relative">
+              <div
+                className={`flex items-center rounded-2xl border bg-white/60 px-4 py-3 backdrop-blur-sm transition-all`}
+              >
+                <select
+                  name="role"
+                  aria-label="Role"
+                  value={formData.role}
+                  onChange={handleInputChange}
+                  className="flex-1 bg-transparent text-black placeholder-gray-600 outline-none"
+                >
+                  <option value="user">User</option>
+                  <option value="admin">Admin</option>
+                </select>
+              </div>
+            </div>
+
             {/* Forgot Password */}
             <div className="text-left">
-              <button 
+              <button
                 type="button"
-                className="text-black hover:text-gray-700 text-sm font-medium transition-colors"
+                className="text-sm font-medium text-black transition-colors hover:text-gray-700"
               >
                 Forgot password?
               </button>
@@ -190,18 +221,20 @@ function loging({ onLogin }: LogingProps) {
             <button
               type="submit"
               disabled={isLoading}
-              className="w-full bg-black text-white font-semibold py-4 rounded-2xl hover:bg-gray-800 focus:outline-none focus:ring-4 focus:ring-gray-300/50 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed shadow-lg"
+              className="w-full rounded-2xl bg-black py-4 font-semibold text-white shadow-lg transition-all duration-200 hover:bg-gray-800 focus:ring-4 focus:ring-gray-300/50 focus:outline-none disabled:cursor-not-allowed disabled:opacity-50"
             >
               {isLoading ? 'Please wait...' : 'Login'}
             </button>
 
             {/* Register Link */}
-            <div className="text-center pt-4">
-              <span className="text-gray-700 text-sm">Don't have an account? </span>
+            <div className="pt-4 text-center">
+              <span className="text-sm text-gray-700">
+                Don't have an account?{' '}
+              </span>
               <button
                 type="button"
                 onClick={() => navigate('/signup')}
-                className="text-black hover:text-gray-700 font-medium text-sm transition-colors underline"
+                className="text-sm font-medium text-black underline transition-colors hover:text-gray-700"
               >
                 Sign Up
               </button>
