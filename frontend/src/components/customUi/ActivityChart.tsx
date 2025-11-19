@@ -81,7 +81,7 @@ export const ActivityChart = ({ cartData }: ActivityChartProps) => {
 
   if (cartData.length === 0) {
     return (
-      <div className="flex items-center justify-center h-64 text-gray-500">
+      <div className="flex h-64 items-center justify-center text-gray-500">
         No data available
       </div>
     );
@@ -156,15 +156,11 @@ export const ActivityChart = ({ cartData }: ActivityChartProps) => {
                     <text
                       x={
                         centerX +
-                        currentRadius *
-                          0.7 *
-                          Math.cos((startRad + endRad) / 2)
+                        currentRadius * 0.7 * Math.cos((startRad + endRad) / 2)
                       }
                       y={
                         centerY +
-                        currentRadius *
-                          0.7 *
-                          Math.sin((startRad + endRad) / 2)
+                        currentRadius * 0.7 * Math.sin((startRad + endRad) / 2)
                       }
                       textAnchor="middle"
                       dominantBaseline="middle"
@@ -216,9 +212,7 @@ export const ActivityChart = ({ cartData }: ActivityChartProps) => {
                 }`}
                 onMouseEnter={() => setHoveredIndex(i)}
                 onMouseLeave={() => setHoveredIndex(null)}
-                onClick={() =>
-                  setSelectedRange(selectedRange === i ? null : i)
-                }
+                onClick={() => setSelectedRange(selectedRange === i ? null : i)}
               >
                 <div className="flex items-center space-x-3">
                   <div className={`h-4 w-4 ${item.bgColor} rounded`}></div>
@@ -240,19 +234,19 @@ export const ActivityChart = ({ cartData }: ActivityChartProps) => {
 
           {/* Statistics */}
           <div className="grid grid-cols-2 gap-3 border-t pt-4">
-            <div className="rounded-lg bg-gradient-to-br from-emerald-50 to-emerald-100 p-3">
+            <div className="rounded-lg bg-linear-to-br from-emerald-50 to-emerald-100 p-3">
               <div className="text-lg font-bold text-emerald-700">
                 ${stats.min.toFixed(2)}
               </div>
               <div className="text-xs text-emerald-600">Minimum</div>
             </div>
-            <div className="rounded-lg bg-gradient-to-br from-rose-50 to-rose-100 p-3">
+            <div className="rounded-lg bg-linear-to-br from-rose-50 to-rose-100 p-3">
               <div className="text-lg font-bold text-rose-700">
                 ${stats.max.toFixed(2)}
               </div>
               <div className="text-xs text-rose-600">Maximum</div>
             </div>
-            <div className="col-span-2 rounded-lg bg-gradient-to-br from-blue-50 to-blue-100 p-3">
+            <div className="col-span-2 rounded-lg bg-linear-to-br from-blue-50 to-blue-100 p-3">
               <div className="text-lg font-bold text-blue-700">
                 ${stats.avg.toFixed(2)}
               </div>

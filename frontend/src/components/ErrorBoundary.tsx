@@ -26,45 +26,48 @@ export default class ErrorBoundary extends React.Component<Props, State> {
     console.error('Error Boundary caught an error:', error, errorInfo);
     this.setState({
       error,
-      errorInfo
+      errorInfo,
     });
   }
 
   render() {
     if (this.state.hasError) {
       return (
-        <div className="min-h-screen bg-gradient-to-br from-red-50 to-orange-50 flex items-center justify-center p-6">
-          <div className="bg-white rounded-2xl shadow-xl p-8 max-w-lg w-full">
+        <div className="flex min-h-screen items-center justify-center bg-linear-to-br from-red-50 to-orange-50 p-6">
+          <div className="w-full max-w-lg rounded-2xl bg-white p-8 shadow-xl">
             {/* Error Icon */}
-            <div className="text-center mb-6">
-              <div className="mx-auto w-20 h-20 bg-gradient-to-br from-red-500 to-orange-500 rounded-full flex items-center justify-center shadow-lg">
-                <AlertTriangle className="w-10 h-10 text-white" />
+            <div className="mb-6 text-center">
+              <div className="mx-auto flex h-20 w-20 items-center justify-center rounded-full bg-linear-to-br from-red-500 to-orange-500 shadow-lg">
+                <AlertTriangle className="h-10 w-10 text-white" />
               </div>
             </div>
 
             {/* Error Title */}
-            <h2 className="text-2xl font-semibold text-slate-800 mb-3 text-center">
+            <h2 className="mb-3 text-center text-2xl font-semibold text-slate-800">
               Something went wrong!
             </h2>
 
             {/* Error Description */}
-            <p className="text-slate-600 mb-6 text-center leading-relaxed">
-              An unexpected error occurred. Don't worry, our team has been notified.
+            <p className="mb-6 text-center leading-relaxed text-slate-600">
+              An unexpected error occurred. Don't worry, our team has been
+              notified.
             </p>
 
             {/* Error Details (in development) */}
             {process.env.NODE_ENV === 'development' && this.state.error && (
-              <div className="bg-red-50 border border-red-200 rounded-lg p-4 mb-6">
-                <h3 className="text-red-800 font-semibold mb-2">Error Details:</h3>
-                <pre className="text-sm text-red-700 overflow-auto max-h-32">
+              <div className="mb-6 rounded-lg border border-red-200 bg-red-50 p-4">
+                <h3 className="mb-2 font-semibold text-red-800">
+                  Error Details:
+                </h3>
+                <pre className="max-h-32 overflow-auto text-sm text-red-700">
                   {this.state.error.message}
                 </pre>
                 {this.state.errorInfo && (
                   <details className="mt-2">
-                    <summary className="text-red-800 font-medium cursor-pointer">
+                    <summary className="cursor-pointer font-medium text-red-800">
                       Stack Trace
                     </summary>
-                    <pre className="text-xs text-red-600 mt-2 overflow-auto max-h-32">
+                    <pre className="mt-2 max-h-32 overflow-auto text-xs text-red-600">
                       {this.state.errorInfo.componentStack}
                     </pre>
                   </details>
@@ -73,27 +76,27 @@ export default class ErrorBoundary extends React.Component<Props, State> {
             )}
 
             {/* Action Buttons */}
-            <div className="flex flex-col sm:flex-row gap-3">
+            <div className="flex flex-col gap-3 sm:flex-row">
               <Button
                 onClick={() => window.location.reload()}
                 variant="outline"
-                className="flex-1 hover:bg-red-50 hover:border-red-300 transition-colors duration-200"
+                className="flex-1 transition-colors duration-200 hover:border-red-300 hover:bg-red-50"
               >
-                <RefreshCw className="w-4 h-4 mr-2" />
+                <RefreshCw className="mr-2 h-4 w-4" />
                 Reload Page
               </Button>
-              
+
               <Button
-                onClick={() => window.location.href = '/'}
-                className="flex-1 bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 transition-all duration-200 shadow-lg hover:shadow-xl"
+                onClick={() => (window.location.href = '/')}
+                className="flex-1 bg-linear-to-r from-blue-600 to-purple-600 shadow-lg transition-all duration-200 hover:from-blue-700 hover:to-purple-700 hover:shadow-xl"
               >
-                <Home className="w-4 h-4 mr-2" />
+                <Home className="mr-2 h-4 w-4" />
                 Go Home
               </Button>
             </div>
 
             {/* Help Text */}
-            <p className="text-center text-sm text-slate-500 mt-6">
+            <p className="mt-6 text-center text-sm text-slate-500">
               If this problem persists, please contact our support team.
             </p>
           </div>

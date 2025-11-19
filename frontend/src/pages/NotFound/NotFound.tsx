@@ -7,65 +7,66 @@ export default function NotFound() {
   const location = useLocation();
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 to-blue-50 flex items-center justify-center p-6">
-      <div className="bg-white rounded-2xl shadow-xl p-8 max-w-md w-full text-center">
+    <div className="flex min-h-screen items-center justify-center bg-linear-to-br from-slate-50 to-blue-50 p-6">
+      <div className="w-full max-w-md rounded-2xl bg-white p-8 text-center shadow-xl">
         {/* Error Icon */}
         <div className="mb-6">
-          <div className="mx-auto w-20 h-20 bg-black rounded-full flex items-center justify-center shadow-lg">
-            <AlertTriangle className="w-10 h-10 text-white" />
+          <div className="mx-auto flex h-20 w-20 items-center justify-center rounded-full bg-black shadow-lg">
+            <AlertTriangle className="h-10 w-10 text-white" />
           </div>
         </div>
 
         {/* Error Code */}
         <div className="mb-4">
-          <h1 className="text-6xl font-bold bg-black bg-clip-text text-transparent">
+          <h1 className="bg-black bg-clip-text text-6xl font-bold text-transparent">
             404
           </h1>
         </div>
 
         {/* Error Title */}
-        <h2 className="text-2xl font-semibold text-slate-800 mb-3">
+        <h2 className="mb-3 text-2xl font-semibold text-slate-800">
           Page Not Found
         </h2>
 
         {/* Error Description */}
-        <p className="text-slate-600 mb-6 leading-relaxed">
-          Oops! The page you're looking for doesn't exist. It might have been moved, deleted, or you entered the wrong URL.
+        <p className="mb-6 leading-relaxed text-slate-600">
+          Oops! The page you're looking for doesn't exist. It might have been
+          moved, deleted, or you entered the wrong URL.
         </p>
 
         {/* Current Path Info */}
-        <div className="bg-slate-100 rounded-lg p-3 mb-6">
+        <div className="mb-6 rounded-lg bg-slate-100 p-3">
           <p className="text-sm text-slate-600">
-            <strong>Current Path:</strong> 
-            <code className="ml-1 bg-white px-2 py-1 rounded text-red-600">
+            <strong>Current Path:</strong>
+            <code className="ml-1 rounded bg-white px-2 py-1 text-red-600">
               {location.pathname}
             </code>
           </p>
         </div>
 
         {/* Action Buttons */}
-        <div className="flex flex-col sm:flex-row gap-3">
+        <div className="flex flex-col gap-3 sm:flex-row">
           <Button
             onClick={() => navigate(-1)}
             variant="outline"
-            className="flex-1 hover:bg-slate-50 transition-colors duration-200"
+            className="flex-1 transition-colors duration-200 hover:bg-slate-50"
           >
-            <ArrowLeft className="w-4 h-4 mr-2" />
+            <ArrowLeft className="mr-2 h-4 w-4" />
             Go Back
           </Button>
-          
+
           <Button
             onClick={() => window.location.reload()}
             variant="outline"
-            className="flex-1 hover:bg-slate-50 transition-colors duration-200"
+            className="flex-1 transition-colors duration-200 hover:bg-slate-50"
           >
-            <RefreshCw className="w-4 h-4 mr-2" />
+            <RefreshCw className="mr-2 h-4 w-4" />
             Refresh
           </Button>
-          
+
           {/* <Button
             onClick={() => navigate('/')}
-            className="flex-1 bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 transition-all duration-200 shadow-lg hover:shadow-xl"
+            className="flex-1 bg-linear-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 transition-all duration-200 shadow-lg hover:shadow-xl"
           >
             <Home className="w-4 h-4 mr-2" />
             Go Home
