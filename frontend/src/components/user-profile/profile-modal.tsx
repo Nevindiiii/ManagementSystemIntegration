@@ -12,14 +12,14 @@ interface ProfileModalProps {
 export function ProfileModal({ isOpen, onClose }: ProfileModalProps) {
   const { user } = useAuth();
   const fileInputRef = useRef<HTMLInputElement>(null);
-  
+
   const [profileData, setProfileData] = useState({
     name: user?.name || '',
     email: user?.email || '',
     phone: '',
     location: '',
     bio: '',
-    profileImage: null as string | null
+    profileImage: null as string | null,
   });
 
   const [isEditing, setIsEditing] = useState(false);
@@ -29,9 +29,9 @@ export function ProfileModal({ isOpen, onClose }: ProfileModalProps) {
     if (file) {
       const reader = new FileReader();
       reader.onload = (e) => {
-        setProfileData(prev => ({
+        setProfileData((prev) => ({
           ...prev,
-          profileImage: e.target?.result as string
+          profileImage: e.target?.result as string,
         }));
       };
       reader.readAsDataURL(file);
@@ -48,31 +48,33 @@ export function ProfileModal({ isOpen, onClose }: ProfileModalProps) {
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center">
       {/* Backdrop */}
-      <div 
+      <div
         className="absolute inset-0 bg-black/50 backdrop-blur-sm"
         onClick={onClose}
       />
-      
+
       {/* Modal */}
-      <div className="relative bg-white rounded-2xl shadow-2xl w-full max-w-md mx-4 overflow-hidden">
+      <div className="relative mx-4 w-full max-w-md overflow-hidden rounded-2xl bg-white shadow-2xl">
         {/* Header */}
-        <div className="relative bg-white p-6 text-black border-b">
+        <div className="relative border-b bg-white p-6 text-black">
           <button
             onClick={onClose}
-            className="absolute top-4 right-4 p-1 rounded-full hover:bg-gray-100 transition-colors"
+            className="absolute top-4 right-4 rounded-full p-1 transition-colors hover:bg-gray-100"
+            aria-label="Close profile dialog"
+            title="Close"
           >
-            <X className="w-5 h-5" />
+            <X className="h-5 w-5" />
           </button>
-          
+
           {/* Profile Image */}
           <div className="flex flex-col items-center">
             <div className="relative">
-              <div className="w-24 h-24 rounded-full bg-gray-100 border-2 border-gray-200 flex items-center justify-center overflow-hidden">
+              <div className="flex h-24 w-24 items-center justify-center overflow-hidden rounded-full border-2 border-gray-200 bg-gray-100">
                 {profileData.profileImage ? (
-                  <img 
-                    src={profileData.profileImage} 
-                    alt="Profile" 
-                    className="w-full h-full object-cover"
+                  <img
+                    src={profileData.profileImage}
+                    alt="Profile"
+                    className="h-full w-full object-cover"
                   />
                 ) : (
                   <span className="text-2xl font-bold">
@@ -82,39 +84,50 @@ export function ProfileModal({ isOpen, onClose }: ProfileModalProps) {
               </div>
               <button
                 onClick={() => fileInputRef.current?.click()}
-                className="absolute -bottom-1 -right-1 bg-black text-white p-2 rounded-full shadow-lg hover:bg-gray-800 transition-colors"
+                className="absolute -right-1 -bottom-1 rounded-full bg-black p-2 text-white shadow-lg transition-colors hover:bg-gray-800"
+                aria-label="Upload profile image"
+                title="Upload image"
               >
-                <Camera className="w-4 h-4" />
+                <Camera className="h-4 w-4" />
               </button>
               <input
+                id="profile-image-input"
                 ref={fileInputRef}
                 type="file"
                 accept="image/*"
                 onChange={handleImageUpload}
                 className="hidden"
+                aria-label="Profile image file input"
               />
             </div>
-            <h2 className="mt-4 text-xl font-semibold text-black">{profileData.name}</h2>
-            <p className="text-gray-600 text-sm">{profileData.email}</p>
+            <h2 className="mt-4 text-xl font-semibold text-black">
+              {profileData.name}
+            </h2>
+            <p className="text-sm text-gray-600">{profileData.email}</p>
           </div>
         </div>
 
         {/* Content */}
-        <div className="p-6 space-y-4">
+        <div className="space-y-4 p-6">
           {/* Name */}
           <div className="space-y-2">
             <label className="flex items-center gap-2 text-sm font-medium text-gray-700">
-              <User className="w-4 h-4" />
+              <User className="h-4 w-4" />
               Name
             </label>
             {isEditing ? (
               <Input
+                id="profile-name"
+                name="name"
+                placeholder="Full name"
                 value={profileData.name}
-                onChange={(e) => setProfileData(prev => ({ ...prev, name: e.target.value }))}
+                onChange={(e) =>
+                  setProfileData((prev) => ({ ...prev, name: e.target.value }))
+                }
                 className="w-full"
               />
             ) : (
-              <div className="p-3 bg-gray-50 rounded-lg text-gray-900">
+              <div className="rounded-lg bg-gray-50 p-3 text-gray-900">
                 {profileData.name}
               </div>
             )}
@@ -123,10 +136,10 @@ export function ProfileModal({ isOpen, onClose }: ProfileModalProps) {
           {/* Email */}
           <div className="space-y-2">
             <label className="flex items-center gap-2 text-sm font-medium text-gray-700">
-              <Mail className="w-4 h-4" />
+              <Mail className="h-4 w-4" />
               Email
             </label>
-            <div className="p-3 bg-gray-50 rounded-lg text-gray-900">
+            <div className="rounded-lg bg-gray-50 p-3 text-gray-900">
               {profileData.email}
             </div>
           </div>
@@ -134,18 +147,22 @@ export function ProfileModal({ isOpen, onClose }: ProfileModalProps) {
           {/* Phone */}
           <div className="space-y-2">
             <label className="flex items-center gap-2 text-sm font-medium text-gray-700">
-              <Phone className="w-4 h-4" />
+              <Phone className="h-4 w-4" />
               Phone
             </label>
             {isEditing ? (
               <Input
+                id="profile-phone"
+                name="phone"
                 value={profileData.phone}
-                onChange={(e) => setProfileData(prev => ({ ...prev, phone: e.target.value }))}
+                onChange={(e) =>
+                  setProfileData((prev) => ({ ...prev, phone: e.target.value }))
+                }
                 placeholder="Enter phone number"
                 className="w-full"
               />
             ) : (
-              <div className="p-3 bg-gray-50 rounded-lg text-gray-900">
+              <div className="rounded-lg bg-gray-50 p-3 text-gray-900">
                 {profileData.phone || 'Not provided'}
               </div>
             )}
@@ -154,18 +171,25 @@ export function ProfileModal({ isOpen, onClose }: ProfileModalProps) {
           {/* Location */}
           <div className="space-y-2">
             <label className="flex items-center gap-2 text-sm font-medium text-gray-700">
-              <MapPin className="w-4 h-4" />
+              <MapPin className="h-4 w-4" />
               Location
             </label>
             {isEditing ? (
               <Input
+                id="profile-location"
+                name="location"
                 value={profileData.location}
-                onChange={(e) => setProfileData(prev => ({ ...prev, location: e.target.value }))}
+                onChange={(e) =>
+                  setProfileData((prev) => ({
+                    ...prev,
+                    location: e.target.value,
+                  }))
+                }
                 placeholder="Enter location"
                 className="w-full"
               />
             ) : (
-              <div className="p-3 bg-gray-50 rounded-lg text-gray-900">
+              <div className="rounded-lg bg-gray-50 p-3 text-gray-900">
                 {profileData.location || 'Not provided'}
               </div>
             )}
@@ -177,9 +201,9 @@ export function ProfileModal({ isOpen, onClose }: ProfileModalProps) {
               <>
                 <Button
                   onClick={handleSave}
-                  className="flex-1 bg-black hover:bg-gray-800 text-white"
+                  className="flex-1 bg-black text-white hover:bg-gray-800"
                 >
-                  <Save className="w-4 h-4 mr-2" />
+                  <Save className="mr-2 h-4 w-4" />
                   Save Changes
                 </Button>
                 <Button
@@ -193,7 +217,7 @@ export function ProfileModal({ isOpen, onClose }: ProfileModalProps) {
             ) : (
               <Button
                 onClick={() => setIsEditing(true)}
-                className="w-full bg-black hover:bg-gray-800 text-white"
+                className="w-full bg-black text-white hover:bg-gray-800"
               >
                 Edit Profile
               </Button>

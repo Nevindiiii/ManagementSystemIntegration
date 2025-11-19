@@ -49,7 +49,7 @@ router.get('/', async (req, res) => {
 // GET user by ID
 router.get('/:id', async (req, res) => {
   try {
-    const userId = parseInt(req.params.id); // Convert to number
+    const userId = parseInt(req.params.id); 
     
     if (isNaN(userId)) {
       return res.status(400).json({
@@ -58,7 +58,7 @@ router.get('/:id', async (req, res) => {
       });
     }
     
-    const user = await User.findOne({ id: userId }); // Find by custom id field
+    const user = await User.findOne({ id: userId });
     if (!user) {
       return res.status(404).json({
         success: false,
@@ -68,7 +68,7 @@ router.get('/:id', async (req, res) => {
     
     res.json({
       success: true,
-      id: user.id, // Use custom id field
+      id: user.id,
       firstName: user.firstName,
       lastName: user.lastName,
       age: user.age,
@@ -140,7 +140,7 @@ router.post('/add', async (req, res) => {
     
     // Create new user
     const newUser = new User({
-      id, // Use the auto-generated ID from frontend
+      id,
       firstName,
       lastName,
       age,
@@ -165,7 +165,7 @@ router.post('/add', async (req, res) => {
     res.status(201).json({
       success: true,
       message: `User created successfully with ID ${savedUser.id}`,
-      id: savedUser.id, // Confirm the saved ID
+      id: savedUser.id, 
       firstName: savedUser.firstName,
       lastName: savedUser.lastName,
       age: savedUser.age,
@@ -176,7 +176,7 @@ router.post('/add', async (req, res) => {
   } catch (error) {
     console.error('Error creating user:', error);
     if (error.code === 11000) {
-      // Duplicate error (could be email or id)
+      // Duplicate error
       const field = Object.keys(error.keyPattern)[0];
       const duplicateValue = Object.values(error.keyValue)[0];
       console.log('Duplicate field error:', field, 'Value:', duplicateValue);
@@ -226,7 +226,7 @@ router.post('/add', async (req, res) => {
 // PUT update user
 router.put('/:id', async (req, res) => {
   try {
-    const paramId = parseInt(req.params.id); // Convert URL param to number
+    const paramId = parseInt(req.params.id); 
     const { id, firstName, lastName, age, email, phone, birthDate } = req.body;
     
     console.log('Update request - URL ID:', paramId, 'Body ID:', id);
@@ -257,9 +257,9 @@ router.put('/:id', async (req, res) => {
     }
     
     const updatedUser = await User.findOneAndUpdate(
-      { id: paramId }, // Find by URL parameter ID
+      { id: paramId }, 
       {
-        id: id || paramId, // Update the custom id field if provided, otherwise keep existing
+        id: id || paramId, 
         firstName,
         lastName,
         age,
@@ -348,7 +348,7 @@ router.put('/:id', async (req, res) => {
 // DELETE user
 router.delete('/:id', async (req, res) => {
   try {
-    const userId = parseInt(req.params.id); // Convert to number
+    const userId = parseInt(req.params.id); 
     
     if (isNaN(userId)) {
       return res.status(400).json({

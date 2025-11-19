@@ -3,7 +3,7 @@ import { verifyToken } from '../Middleware/authMiddleware.js';
 
 const router = express.Router();
 
-// Protected route example - Get user profile
+// Protected route example
 router.get('/profile', verifyToken, async (req, res) => {
   try {
     res.json({
@@ -23,7 +23,7 @@ router.get('/profile', verifyToken, async (req, res) => {
   }
 });
 
-// Protected route example - Update user profile
+// Protected route example
 router.put('/profile', verifyToken, async (req, res) => {
   try {
     const { name } = req.body;

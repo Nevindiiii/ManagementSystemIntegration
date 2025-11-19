@@ -390,7 +390,7 @@ const UserProfile: React.FC = () => {
                           ? 'bg-green-100 text-green-800' 
                           : 'bg-red-100 text-red-800'
                       }`}>
-                        {tokenData.exp > currentTime / 1000 ? '✅ Valid' : '❌ Expired'}
+                        {tokenData.exp > currentTime / 1000 ? ' Valid' : 'Expired'}
                       </div>
                     </div>
                   </div>
@@ -418,74 +418,6 @@ const UserProfile: React.FC = () => {
           })()}
         </div>
       </div>
-
-      {/* Account Security Card */}
-      {/* <div className="bg-white rounded-xl shadow-sm border p-6">
-        <h2 className="text-2xl font-semibold text-gray-800 mb-6 flex items-center space-x-2">
-          <Shield className="w-6 h-6 text-blue-600" />
-          <span>Account Security</span>
-        </h2>
-        
-        <div className="space-y-4">
-          <div className="flex items-center justify-between p-4 bg-green-50 rounded-lg border border-green-200">
-            <div className="flex items-center space-x-3">
-              <div className="w-8 h-8 bg-green-600 rounded-full flex items-center justify-center">
-                <CheckCircle2 className="w-5 h-5 text-white" />
-              </div>
-              <div>
-                <h3 className="font-medium text-green-800">Account Verified</h3>
-                <p className="text-sm text-green-600">Your account is secure and verified</p>
-              </div>
-            </div>
-          </div>
-
-          <div className="flex items-center justify-between p-4 bg-blue-50 rounded-lg border border-blue-200">
-            <div className="flex items-center space-x-3">
-              <div className="w-8 h-8 bg-blue-600 rounded-full flex items-center justify-center">
-                <Mail className="w-5 h-5 text-white" />
-              </div>
-              <div>
-                <h3 className="font-medium text-blue-800">Email Notifications</h3>
-                <p className="text-sm text-blue-600">Receive important updates via email</p>
-              </div>
-            </div>
-            <div className="text-blue-600 font-medium">Enabled</div>
-          </div>
-        </div>
-      </div> */}
-
-      {/* Quick Actions */}
-      {/* <div className="bg-white rounded-xl shadow-sm border p-6">
-        <h2 className="text-2xl font-semibold text-gray-800 mb-6">Quick Actions</h2>
-        <div className="grid md:grid-cols-3 gap-4">
-          <Button 
-            variant="outline" 
-            className="h-auto p-4 flex-col space-y-2 hover:bg-blue-50"
-            onClick={() => window.location.reload()}
-          >
-            <User className="w-6 h-6 text-blue-600" />
-            <span>Refresh Profile</span>
-          </Button>
-          
-          <Button 
-            variant="outline" 
-            className="h-auto p-4 flex-col space-y-2 hover:bg-green-50"
-            onClick={() => setSuccessMessage('Feature coming soon!')}
-          >
-            <Mail className="w-6 h-6 text-green-600" />
-            <span>Update Email</span>
-          </Button>
-          
-          <Button 
-            variant="outline" 
-            className="h-auto p-4 flex-col space-y-2 hover:bg-purple-50"
-            onClick={() => setSuccessMessage('Feature coming soon!')}
-          >
-            <Shield className="w-6 h-6 text-purple-600" />
-            <span>Security Settings</span>
-          </Button>
-        </div>
-      </div> */}
     </div>
   );
 };

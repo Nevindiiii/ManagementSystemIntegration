@@ -123,7 +123,7 @@ router.post("/login", async (req, res) => {
     res.json({
       success: true,
       message: "Login successful",
-      token: token, // Send token for frontend decoding
+      token: token, 
       user: {
         id: user._id,
         name: user.name,
@@ -157,7 +157,7 @@ router.post("/logout", (req, res) => {
   });
 });
 
-// GET list of auth users (with pagination)
+// GET list of auth users 
 router.get("/users", async (req, res) => {
   try {
     const page = parseInt(req.query.page) || 1;

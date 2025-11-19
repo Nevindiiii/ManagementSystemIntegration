@@ -84,7 +84,7 @@ export const refreshToken = async (req, res) => {
 
     const newToken = generateToken(user);
 
-    // Set new token as httpOnly cookie
+    // Set new token
     res.cookie("auth_token", newToken, {
       httpOnly: true,
       secure: process.env.NODE_ENV === "production",
@@ -94,9 +94,9 @@ export const refreshToken = async (req, res) => {
 
     res.json({
       success: true,
-      token: newToken, // Send new token
+      token: newToken, 
       user: {
-        // id: user._id,
+      
         name: user.name,
         email: user.email,
       },

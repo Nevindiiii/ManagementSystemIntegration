@@ -48,7 +48,7 @@ const userSchema = new mongoose.Schema({
     }
   }
 }, {
-  timestamps: true // This adds createdAt and updatedAt fields
+  timestamps: true 
 });
 
 const User = mongoose.model('User', userSchema);
