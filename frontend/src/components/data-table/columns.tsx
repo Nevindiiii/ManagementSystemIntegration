@@ -11,6 +11,7 @@ import { usePostStore } from '@/store/postStore';
 import { useUpdateUser, useDeleteUser } from '@/hooks/useUserQueries';
 import { UserDetailsDialog } from '@/components/form/user-details-dialog';
 import DeleteAlert from '@/components/customUi/delete-alert';
+import { useAuth } from '@/contexts/AuthContext';
 
 export const UserSchema = z.object({
   id: z.number().min(1, 'ID must be greater than 0'),
@@ -52,10 +53,14 @@ export const UserSchema = z.object({
     .refine(
       (phone) => {
         // Allow phone numbers with country codes (+1, +94, etc.) and various formats
-        const phoneRegex = /^(\+\d{1,3}[- ]?)?\(?\d{1,4}\)?[- ]?\d{1,4}[- ]?\d{1,9}$/;
+        const phoneRegex =
+          /^(\+\d{1,3}[- ]?)?\(?\d{1,4}\)?[- ]?\d{1,4}[- ]?\d{1,9}$/;
         return phoneRegex.test(phone.replace(/\s/g, ''));
       },
-      { message: 'Please enter a valid phone number (e.g., +1 123 456 7890 or +94 77 123 4567)' }
+      {
+        message:
+          'Please enter a valid phone number (e.g., +1 123 456 7890 or +94 77 123 4567)',
+      }
     ),
   birthDate: z
     .string()
@@ -73,7 +78,6 @@ export const UserSchema = z.object({
 
 export type User = z.infer<typeof UserSchema>;
 
-
 function ActionsCell({ user }: { user: User }) {
   const [showDialog, setShowDialog] = useState(false);
   const [showEditDialog, setShowEditDialog] = useState(false);
@@ -83,8 +87,28 @@ function ActionsCell({ user }: { user: User }) {
   const updateUserMutation = useUpdateUser();
   const deleteUserMutation = useDeleteUser();
 
+  const { tokenData, getTokenData, user: authUser } = useAuth();
+  const storedToken = getTokenData ? getTokenData() : null;
+  const role =
+    tokenData?.role ||
+    tokenData?.roles ||
+    tokenData?.roleName ||
+    storedToken?.role ||
+    storedToken?.roles ||
+    authUser?.role ||
+    'user';
+
+  // Debug: log role resolution to help diagnose why admin sees only View
+  // (Remove this in production)
+  // eslint-disable-next-line no-console
+  console.debug('ActionsCell role resolution', {
+    role,
+    tokenData,
+    storedToken,
+    authUser,
+  });
+
   const handleDeleteClick = () => {
-    console.log('Delete clicked for user:', user);
     setDeleteOpen(true);
   };
 
@@ -94,7 +118,7 @@ function ActionsCell({ user }: { user: User }) {
       setDeleteOpen(false);
       return;
     }
-    
+
     setIsDeleting(true);
     try {
       await deleteUserMutation.mutateAsync(user.id);
@@ -114,13 +138,10 @@ function ActionsCell({ user }: { user: User }) {
 
   const handleUpdate = async (updatedUser: User) => {
     try {
-      console.log('Attempting to update user:', updatedUser);
-      // Always update in backend since we're using consistent number IDs
       const result = await updateUserMutation.mutateAsync(updatedUser);
       console.log('Update successful:', result);
     } catch (error) {
       console.error('Failed to update user:', error);
-      // Fallback to local store update if backend fails
       updatePost(updatedUser);
       throw error;
     }
@@ -137,26 +158,32 @@ function ActionsCell({ user }: { user: User }) {
         >
           <Eye className="h-4 w-4" />
         </Button>
-        <Button
-          variant="ghost"
-          size="sm"
-          onClick={() => setShowEditDialog(true)}
-          className="h-8 w-8 p-0"
-          disabled={updateUserMutation.isPending}
-        >
-          <Edit className="h-4 w-4" />
-        </Button>
-        <Button
-          id="trash"
-          variant="ghost"
-          size="sm"
-          onClick={handleDeleteClick}
-          className="h-8 w-8 p-0 text-red-600 hover:text-red-800"
-          disabled={deleteUserMutation.isPending || !user?.id}
-          title={!user?.id ? 'Cannot delete: Invalid user ID' : 'Delete user'}
-        >
-          <Trash2 className="h-4 w-4" />
-        </Button>
+        {role === 'admin' ? (
+          <>
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={() => setShowEditDialog(true)}
+              className="h-8 w-8 p-0"
+              disabled={updateUserMutation.isPending}
+            >
+              <Edit className="h-4 w-4" />
+            </Button>
+            <Button
+              id="trash"
+              variant="ghost"
+              size="sm"
+              onClick={handleDeleteClick}
+              className="h-8 w-8 p-0 text-red-600 hover:text-red-800"
+              disabled={deleteUserMutation.isPending || !user?.id}
+              title={
+                !user?.id ? 'Cannot delete: Invalid user ID' : 'Delete user'
+              }
+            >
+              <Trash2 className="h-4 w-4" />
+            </Button>
+          </>
+        ) : null}
       </div>
 
       <UserDetailsDialog
@@ -219,19 +246,20 @@ export const columns: ColumnDef<User>[] = [
     cell: ({ row }) => {
       const firstName = row.original.firstName || '';
       const lastName = row.original.lastName || '';
-      const initials = `${firstName[0] || ''}${lastName[0] || ''}`.toUpperCase();
+      const initials =
+        `${firstName[0] || ''}${lastName[0] || ''}`.toUpperCase();
       return (
         <div className="flex items-center gap-3">
-          <Avatar className="h-9 w-9 border-2 border-primary/20">
-            <AvatarFallback className="text-xs font-bold bg-primary/10 text-primary">
+          <Avatar className="border-primary/20 h-9 w-9 border-2">
+            <AvatarFallback className="bg-primary/10 text-primary text-xs font-bold">
               {initials || '??'}
             </AvatarFallback>
           </Avatar>
           <div className="flex flex-col">
-            <span className="font-medium text-sm">
+            <span className="text-sm font-medium">
               {firstName} {lastName}
             </span>
-            <span className="text-xs text-muted-foreground">
+            <span className="text-muted-foreground text-xs">
               {row.original.email}
             </span>
           </div>
