@@ -4,6 +4,7 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { useEffect } from 'react';
 import NewlyAddedUsersTable from './pages/pageA/users';
 import UsersTable from './pages/pageB/products';
+import ManualProducts from './pages/pageB/manual-products';
 import AdminDashboard from './pages/admin/Dashboard';
 import AuthUsersPage from './pages/authUsers';
 import Layout from './components/layout/layout';
@@ -116,6 +117,16 @@ function App() {
                 <ProtectedRoute>
                   <Layout>
                     <UsersTable />
+                  </Layout>
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/manual-products"
+              element={
+                <ProtectedRoute>
+                  <Layout>
+                    <ManualProducts />
                   </Layout>
                 </ProtectedRoute>
               }

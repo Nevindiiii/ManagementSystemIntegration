@@ -1,4 +1,4 @@
-import { BarChart3,  UserPlus, Package, User } from "lucide-react"
+import { BarChart3,  UserPlus, Package, User, PackagePlus } from "lucide-react"
 import { useNavigate, useLocation } from 'react-router'
 import { useState } from 'react'
 import { ProfileModal } from '@/components/user-profile/profile-modal'
@@ -32,6 +32,11 @@ const items = [
     title: "Products Data", 
     url: "/products",
     icon: Package,
+  },
+  {
+    title: "Manual Products",
+    url: "/manual-products",
+    icon: PackagePlus,
   },
   {
     title: "Profile",
