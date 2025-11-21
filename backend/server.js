@@ -9,6 +9,7 @@ import userRoutes from "./Routes/usersRoutes.js";
 import authRoutes from "./Routes/authRoutes.js";
 import protectedRoutes from "./Routes/protectedRoutes.js";
 import settingsRoutes from "./Routes/settingsRoutes.js";
+import productsRoutes from "./Routes/productsRoutes.js";
 
 dotenv.config();
 const app = express();
@@ -70,7 +71,8 @@ app.options(/.*/, (req, res) => {
 
 
 // Middlewares
-app.use(express.json());
+app.use(express.json({ limit: '50mb' }));
+app.use(express.urlencoded({ limit: '50mb', extended: true }));
 app.use(cookieParser());
 
 // Connect DB
@@ -81,6 +83,7 @@ app.use("/api/users", userRoutes);
 app.use("/api/auth", authRoutes);
 app.use("/api/protected", protectedRoutes);
 app.use("/api/settings", settingsRoutes);
+app.use("/api/products", productsRoutes);
 
 app.get("/", (req, res) => {
   res.send("Server is running");

@@ -13,10 +13,10 @@ import {
   type RowSelectionState,
 } from "@tanstack/react-table";
 
-export function useAppTable<TData>(data: TData[], columns: ColumnDef<TData, any>[]) {
+export function useAppTable<TData>(data: TData[], columns: ColumnDef<TData, any>[], initialVisibility?: VisibilityState) {
   const [sorting, setSorting] = useState<SortingState>([]);
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
-  const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({});
+  const [columnVisibility, setColumnVisibility] = useState<VisibilityState>(initialVisibility || {});
   const [rowSelection, setRowSelection] = useState<RowSelectionState>({});
 
   const memoData = useMemo(() => data, [data]);
@@ -37,6 +37,7 @@ export function useAppTable<TData>(data: TData[], columns: ColumnDef<TData, any>
     onRowSelectionChange: setRowSelection,
     enableRowSelection: true,
     state: { sorting, columnFilters, columnVisibility, rowSelection },
+    enableHiding: true,
   });
 
   return { table, sorting, columnFilters, columnVisibility, rowSelection, setSorting, setColumnFilters, setColumnVisibility, setRowSelection };

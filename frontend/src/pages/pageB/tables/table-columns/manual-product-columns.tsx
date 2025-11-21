@@ -1,5 +1,5 @@
 import { ColumnDef } from '@tanstack/react-table';
-import { Eye, X, Minus, Plus, ShoppingCart } from 'lucide-react';
+import { Eye, Edit, Trash2, X, Minus, Plus, ShoppingCart } from 'lucide-react';
 import { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Product } from '@/apis/product';
@@ -8,7 +8,15 @@ import {
   DialogContent,
 } from '@/components/ui/dialog';
 
-function ProductActionsCell({ product }: { product: Product }) {
+function ManualProductActionsCell({ 
+  product, 
+  onEdit, 
+  onDelete 
+}: { 
+  product: Product;
+  onEdit: (product: Product) => void;
+  onDelete: (id: number | string) => void;
+}) {
   const [showDialog, setShowDialog] = useState(false);
 
   return (
@@ -22,9 +30,10 @@ function ProductActionsCell({ product }: { product: Product }) {
         >
           <Eye className="h-4 w-4" />
         </Button>
-        {/* <Button
+        <Button
           variant="ghost"
           size="sm"
+          onClick={() => onEdit(product)}
           className="h-8 w-8 p-0"
         >
           <Edit className="h-4 w-4" />
@@ -32,13 +41,13 @@ function ProductActionsCell({ product }: { product: Product }) {
         <Button
           variant="ghost"
           size="sm"
+          onClick={() => onDelete(product.id)}
           className="h-8 w-8 p-0 text-red-600 hover:text-red-800"
         >
           <Trash2 className="h-4 w-4" />
-        </Button> */}
+        </Button>
       </div>
 
-      {/* Product Details Dialog */}
       <Dialog open={showDialog} onOpenChange={setShowDialog}>
         <DialogContent className="max-w-4xl p-0 bg-white">
           <Button
@@ -127,7 +136,10 @@ function ProductActionsCell({ product }: { product: Product }) {
   );
 }
 
-export const productColumns: ColumnDef<Product>[] = [
+export const createManualProductColumns = (
+  onEdit: (product: Product) => void,
+  onDelete: (id: number | string) => void
+): ColumnDef<Product>[] => [
   {
     accessorKey: 'id',
     header: 'ID',
@@ -161,6 +173,12 @@ export const productColumns: ColumnDef<Product>[] = [
   {
     id: 'actions',
     header: 'Actions',
-    cell: ({ row }) => <ProductActionsCell product={row.original} />,
+    cell: ({ row }) => (
+      <ManualProductActionsCell 
+        product={row.original} 
+        onEdit={onEdit}
+        onDelete={onDelete}
+      />
+    ),
   },
 ];

@@ -107,14 +107,7 @@ export function DataTable<TData, TValue>({
       });
     }
 
-    // Filter out hidden columns
-    if (hiddenColumns.length > 0) {
-      workingColumns = workingColumns.filter(col => {
-        const colId = ('accessorKey' in col && col.accessorKey) || col.id;
-        const colIdStr = typeof colId === 'string' ? colId : String(colId);
-        return colIdStr ? !hiddenColumns.includes(colIdStr) : true;
-      });
-    }
+    // Don't filter out hidden columns - let visibility state handle it
 
     // Reorder columns if columnOrder is specified
     if (columnOrder.length > 0) {
@@ -148,7 +141,16 @@ export function DataTable<TData, TValue>({
     return workingColumns;
   }, [columns, customColumns, hiddenColumns, columnOrder, columnWidths, columnHeaders]);
 
-  const { table, columnFilters, setColumnFilters, columnVisibility, setColumnVisibility, rowSelection } = useAppTable(data, processedColumns);
+  // Create initial visibility state from hiddenColumns
+  const initialVisibility = React.useMemo(() => {
+    const visibility: Record<string, boolean> = {};
+    hiddenColumns.forEach(colId => {
+      visibility[colId] = false;
+    });
+    return visibility;
+  }, [hiddenColumns]);
+
+  const { table, columnFilters, setColumnFilters, columnVisibility, setColumnVisibility, rowSelection } = useAppTable(data, processedColumns, initialVisibility);
 
   // expose a small reactive API to parent so external pagination controls
   // receive updates only when relevant table state changes. We memoize

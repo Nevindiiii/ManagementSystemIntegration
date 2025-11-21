@@ -108,3 +108,5 @@ export const refreshToken = async (req, res) => {
     });
   }
 };
+
+export default verifyToken;

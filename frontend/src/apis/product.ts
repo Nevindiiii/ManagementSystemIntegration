@@ -2,7 +2,7 @@ import axios from 'axios';
 
 // Product type definition to match DummyJSON products structure
 export interface Product {
-  id: number;
+  id: number | string;
   title: string;
   brand: string;
   category: string;
@@ -10,11 +10,13 @@ export interface Product {
   rating: number;
   stock: number;
   description: string;
+  image?: string;
+  size?: string;
 }
 
 
 const API_BASE_URL = import.meta.env.VITE_SECRET_API_BASE_URL || 'https://dummyjson.com';
-
+const BACKEND_API_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:5001/api';
 
 console.log('Secret API URL:', API_BASE_URL);
 
@@ -63,10 +65,54 @@ export async function fetchProductById(id: number): Promise<Product | null> {
   }
 }
 
+// Manual product CRUD operations
+export async function createProduct(product: Omit<Product, 'id'>): Promise<Product> {
+  try {
+    const res = await axios.post(`${BACKEND_API_URL}/products`, product, { withCredentials: true });
+    return { ...res.data, id: res.data._id || res.data.id };
+  } catch (error) {
+    console.error('Error creating product:', error);
+    throw error;
+  }
+}
+
+export async function updateProduct(id: string, product: Partial<Product>): Promise<Product> {
+  try {
+    const res = await axios.put(`${BACKEND_API_URL}/products/${id}`, product, { withCredentials: true });
+    return res.data;
+  } catch (error) {
+    console.error('Error updating product:', error);
+    throw error;
+  }
+}
+
+export async function deleteProduct(id: string): Promise<void> {
+  try {
+    await axios.delete(`${BACKEND_API_URL}/products/${id}`, { withCredentials: true });
+  } catch (error) {
+    console.error('Error deleting product:', error);
+    throw error;
+  }
+}
+
+export async function fetchManualProducts(): Promise<Product[]> {
+  try {
+    const res = await axios.get(`${BACKEND_API_URL}/products`, { withCredentials: true });
+    return res.data.map((p: any) => ({ ...p, id: p._id || p.id }));
+  } catch (error) {
+    console.error('Error fetching manual products:', error);
+    return [];
+  }
+}
+
 // Export individual functions
 export const productApi = {
   fetchProducts,
   fetchProductById,
+  createProduct,
+  updateProduct,
+  deleteProduct,
+  fetchManualProducts,
 };
 
 export default fetchProducts;
