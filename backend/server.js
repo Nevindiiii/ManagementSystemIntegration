@@ -12,6 +12,7 @@ import settingsRoutes from "./Routes/settingsRoutes.js";
 import productsRoutes from "./Routes/productsRoutes.js";
 import uploadRoutes from "./Routes/uploadRoutes.js";
 import profileRoutes from "./Routes/profileRoutes.js";
+import contactRoutes from "./Routes/contact.js";
 
 dotenv.config();
 const app = express();
@@ -89,6 +90,7 @@ app.use("/api/settings", settingsRoutes);
 app.use("/api/products", productsRoutes);
 app.use("/api/upload", uploadRoutes);
 app.use("/api/profile", profileRoutes);
+app.use("/api/contact", contactRoutes);
 
 app.get("/", (req, res) => {
   res.send("Server is running");

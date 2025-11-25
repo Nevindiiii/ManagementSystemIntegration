@@ -13,6 +13,7 @@ import LoginPage from './pages/auth/loging';
 import SignupPage from './pages/auth/signup';
 import UserProfile from './components/user-profile/profile';
 import SettingsPage from './pages/settings/Settings';
+import Contact from './pages/contact/Contact';
 import ErrorBoundary from './components/ErrorBoundary';
 import { AuthProvider } from './contexts/AuthContext';
 import { ProtectedRoute } from './components/auth/ProtectedRoute';
@@ -167,6 +168,16 @@ function App() {
                 <ProtectedRoute>
                   <Layout>
                     <SettingsPage />
+                  </Layout>
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/contact"
+              element={
+                <ProtectedRoute>
+                  <Layout>
+                    <Contact />
                   </Layout>
                 </ProtectedRoute>
               }

@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { BarChart3, UserPlus, Package, User, Settings, Menu, PackagePlus } from 'lucide-react';
+import { BarChart3, UserPlus, Package, User, Settings, Menu, PackagePlus, Mail } from 'lucide-react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { ProfileModal } from '@/components/user-profile/profile-modal';
 
@@ -8,6 +8,7 @@ const items = [
   { title: 'Users Data', url: '/users', icon: UserPlus },
   { title: 'Products Data', url: '/products', icon: Package },
   { title: 'Manual Products', url: '/manual-products', icon: PackagePlus },
+  { title: 'Contact', url: '/contact', icon: Mail },
   { title: 'Profile', url: '/profile', icon: User },
   { title: 'Settings', url: '/settings', icon: Settings },
 ];
