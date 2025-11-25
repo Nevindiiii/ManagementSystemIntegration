@@ -1,8 +1,8 @@
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { useAuth } from '@/contexts/AuthContext';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { X, Camera, Save, User, Mail, Phone, MapPin } from 'lucide-react';
+import { X, Camera, Save, User, Mail, Phone, MapPin, Loader2 } from 'lucide-react';
 
 interface ProfileModalProps {
   isOpen: boolean;
@@ -23,24 +23,82 @@ export function ProfileModal({ isOpen, onClose }: ProfileModalProps) {
   });
 
   const [isEditing, setIsEditing] = useState(false);
+  const [isUploading, setIsUploading] = useState(false);
+  const [isSaving, setIsSaving] = useState(false);
 
-  const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+  useEffect(() => {
+    if (isOpen && user) {
+      fetch(`${import.meta.env.VITE_API_BASE_URL}/profile`, {
+        credentials: 'include',
+      })
+        .then((res) => res.json())
+        .then((data) => {
+          if (data.success) {
+            setProfileData({
+              name: data.data.name || user.name || '',
+              email: data.data.email || user.email || '',
+              phone: data.data.phone || '',
+              location: data.data.location || '',
+              bio: data.data.bio || '',
+              profileImage: data.data.profileImage || null,
+            });
+          }
+        })
+        .catch((error) => console.error('Fetch failed:', error));
+    }
+  }, [isOpen, user]);
+
+  const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
-    if (file) {
-      const reader = new FileReader();
-      reader.onload = (e) => {
+    if (!file) return;
+
+    setIsUploading(true);
+    const formData = new FormData();
+    formData.append('image', file);
+
+    try {
+      const response = await fetch('http://localhost:5000/api/upload/profile-image', {
+        method: 'POST',
+        body: formData,
+      });
+
+      const data = await response.json();
+      
+      if (response.ok) {
         setProfileData((prev) => ({
           ...prev,
-          profileImage: e.target?.result as string,
+          profileImage: data.url,
         }));
-      };
-      reader.readAsDataURL(file);
+      }
+    } catch (error) {
+      console.error('Upload failed:', error);
+    } finally {
+      setIsUploading(false);
     }
   };
 
-  const handleSave = () => {
-    setIsEditing(false);
-    // Here you would typically save to backend
+  const handleSave = async () => {
+    setIsSaving(true);
+    try {
+      const response = await fetch(`${import.meta.env.VITE_API_BASE_URL}/profile`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        credentials: 'include',
+        body: JSON.stringify(profileData),
+      });
+
+      if (response.ok) {
+        setIsEditing(false);
+        alert('Profile updated successfully!');
+      } else {
+        alert('Failed to update profile');
+      }
+    } catch (error) {
+      console.error('Save failed:', error);
+      alert('Error saving profile');
+    } finally {
+      setIsSaving(false);
+    }
   };
 
   if (!isOpen) return null;
@@ -84,11 +142,12 @@ export function ProfileModal({ isOpen, onClose }: ProfileModalProps) {
               </div>
               <button
                 onClick={() => fileInputRef.current?.click()}
-                className="absolute -right-1 -bottom-1 rounded-full bg-black p-2 text-white shadow-lg transition-colors hover:bg-gray-800"
+                disabled={isUploading}
+                className="absolute -right-1 -bottom-1 rounded-full bg-black p-2 text-white shadow-lg transition-colors hover:bg-gray-800 disabled:opacity-50"
                 aria-label="Upload profile image"
                 title="Upload image"
               >
-                <Camera className="h-4 w-4" />
+                {isUploading ? <Loader2 className="h-4 w-4 animate-spin" /> : <Camera className="h-4 w-4" />}
               </button>
               <input
                 id="profile-image-input"
@@ -201,10 +260,15 @@ export function ProfileModal({ isOpen, onClose }: ProfileModalProps) {
               <>
                 <Button
                   onClick={handleSave}
+                  disabled={isSaving}
                   className="flex-1 bg-black text-white hover:bg-gray-800"
                 >
-                  <Save className="mr-2 h-4 w-4" />
-                  Save Changes
+                  {isSaving ? (
+                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                  ) : (
+                    <Save className="mr-2 h-4 w-4" />
+                  )}
+                  {isSaving ? 'Saving...' : 'Save Changes'}
                 </Button>
                 <Button
                   onClick={() => setIsEditing(false)}

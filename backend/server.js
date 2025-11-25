@@ -10,6 +10,8 @@ import authRoutes from "./Routes/authRoutes.js";
 import protectedRoutes from "./Routes/protectedRoutes.js";
 import settingsRoutes from "./Routes/settingsRoutes.js";
 import productsRoutes from "./Routes/productsRoutes.js";
+import uploadRoutes from "./Routes/uploadRoutes.js";
+import profileRoutes from "./Routes/profileRoutes.js";
 
 dotenv.config();
 const app = express();
@@ -84,6 +86,8 @@ app.use("/api/auth", authRoutes);
 app.use("/api/protected", protectedRoutes);
 app.use("/api/settings", settingsRoutes);
 app.use("/api/products", productsRoutes);
+app.use("/api/upload", uploadRoutes);
+app.use("/api/profile", profileRoutes);
 
 app.get("/", (req, res) => {
   res.send("Server is running");

@@ -7,7 +7,12 @@ dotenv.config();
 const connectDB = async () => {
   try {
     const conn = await mongoose.connect(process.env.MONGO_URI, {
-      
+      serverSelectionTimeoutMS: 5000,
+      socketTimeoutMS: 45000,
+      tls: true,
+      tlsAllowInvalidCertificates: false,
+      retryWrites: true,
+      w: 'majority'
     });
     
     console.log(` MongoDB Connected: ${conn.connection.host}`);
