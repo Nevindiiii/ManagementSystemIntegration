@@ -1,0 +1,14 @@
+# Environment variables
+.env
+backend/.env
+frontend/.env
+
+# Dependencies
+node_modules/
+
+# Build outputs
+dist/
+build/
+
+# Uploads
+backend/uploads/
