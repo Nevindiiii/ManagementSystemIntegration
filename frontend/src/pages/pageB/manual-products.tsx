@@ -6,7 +6,7 @@ import { Input } from '@/components/ui/input';
 import TableColumnsDropdown from '@/components/data-table/table-columns-dropdown';
 import { DataTable } from '@/components/data-table/data-table';
 import { Button } from '@/components/ui/button';
-import { Plus, Upload } from 'lucide-react';
+import { Plus, Upload, Loader2 } from 'lucide-react';
 import { Product, createProduct, updateProduct, deleteProduct, fetchManualProducts } from '@/apis/product';
 import {
   Dialog,
@@ -53,17 +53,29 @@ export default function ManualProducts() {
     size: '',
   });
   const [imagePreview, setImagePreview] = useState<string>('');
+  const [uploading, setUploading] = useState(false);
 
-  const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
-    if (file) {
-      const reader = new FileReader();
-      reader.onloadend = () => {
-        const base64String = reader.result as string;
-        setNewProduct({ ...newProduct, image: base64String });
-        setImagePreview(base64String);
-      };
-      reader.readAsDataURL(file);
+    if (!file) return;
+
+    // Show preview immediately
+    const reader = new FileReader();
+    reader.onloadend = () => setImagePreview(reader.result as string);
+    reader.readAsDataURL(file);
+
+    // Upload to Cloudinary
+    setUploading(true);
+    try {
+      const { uploadToCloudinary } = await import('@/utils/cloudinary');
+      const imageUrl = await uploadToCloudinary(file);
+      setNewProduct({ ...newProduct, image: imageUrl });
+    } catch (error) {
+      console.error('Upload failed:', error);
+      alert('Failed to upload image. Please try again.');
+      setImagePreview('');
+    } finally {
+      setUploading(false);
     }
   };
 
@@ -307,8 +319,8 @@ export default function ManualProducts() {
                 />
                 <label htmlFor="image-upload">
                   <div className="flex items-center justify-center gap-2 px-4 py-2 border border-gray-300 rounded-md cursor-pointer hover:bg-gray-50">
-                    <Upload className="h-4 w-4" />
-                    <span className="text-sm">Browse Image</span>
+                    {uploading ? <Loader2 className="h-4 w-4 animate-spin" /> : <Upload className="h-4 w-4" />}
+                    <span className="text-sm">{uploading ? 'Uploading...' : 'Browse Image'}</span>
                   </div>
                 </label>
                 {imagePreview && (
@@ -359,8 +371,8 @@ export default function ManualProducts() {
                 onChange={(e) => setNewProduct({ ...newProduct, description: e.target.value })}
               />
             </div>
-            <Button onClick={handleAddProduct} className="w-full bg-black hover:bg-gray-800 text-white">
-              Add Product
+            <Button onClick={handleAddProduct} disabled={uploading || loading} className="w-full bg-black hover:bg-gray-800 text-white">
+              {loading ? 'Adding...' : 'Add Product'}
             </Button>
           </div>
         </DialogContent>
@@ -405,8 +417,8 @@ export default function ManualProducts() {
                 />
                 <label htmlFor="image-upload-edit">
                   <div className="flex items-center justify-center gap-2 px-4 py-2 border border-gray-300 rounded-md cursor-pointer hover:bg-gray-50">
-                    <Upload className="h-4 w-4" />
-                    <span className="text-sm">Browse Image</span>
+                    {uploading ? <Loader2 className="h-4 w-4 animate-spin" /> : <Upload className="h-4 w-4" />}
+                    <span className="text-sm">{uploading ? 'Uploading...' : 'Browse Image'}</span>
                   </div>
                 </label>
                 {(imagePreview || newProduct.image) && (
@@ -457,8 +469,8 @@ export default function ManualProducts() {
                 onChange={(e) => setNewProduct({ ...newProduct, description: e.target.value })}
               />
             </div>
-            <Button onClick={handleUpdateProduct} className="w-full bg-black hover:bg-gray-800 text-white">
-              Update Product
+            <Button onClick={handleUpdateProduct} disabled={uploading || loading} className="w-full bg-black hover:bg-gray-800 text-white">
+              {loading ? 'Updating...' : 'Update Product'}
             </Button>
           </div>
         </DialogContent>

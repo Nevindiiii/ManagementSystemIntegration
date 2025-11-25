@@ -3,7 +3,7 @@ import { io, Socket } from 'socket.io-client';
 import { toast } from 'sonner';
 import { useNotificationStore } from '@/store/notificationStore';
 
-const SOCKET_URL = 'http://localhost:5001';
+const SOCKET_URL = 'http://localhost:5000';
 
 
 export const useSocket = () => {
