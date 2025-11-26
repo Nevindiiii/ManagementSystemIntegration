@@ -57,7 +57,7 @@ export function ProfileModal({ isOpen, onClose }: ProfileModalProps) {
     formData.append('image', file);
 
     try {
-      const response = await fetch('http://localhost:5000/api/upload/profile-image', {
+      const response = await fetch(`${import.meta.env.VITE_API_BASE_URL}/upload/profile-image`, {
         method: 'POST',
         body: formData,
       });
