@@ -15,8 +15,13 @@ const transporter = nodemailer.createTransport({
 router.post('/send', async (req, res) => {
   const { name, email, subject, message } = req.body;
 
+  console.log('Email config:', {
+    user: process.env.EMAIL_USER,
+    passLength: process.env.EMAIL_PASS?.length
+  });
+
   try {
-    await transporter.sendMail({
+    const info = await transporter.sendMail({
       from: process.env.EMAIL_USER,
       to: email,
       subject: `Contact Form: ${subject}`,
@@ -28,9 +33,14 @@ router.post('/send', async (req, res) => {
       `
     });
 
+    console.log('Email sent:', info.messageId);
     res.json({ success: true, message: 'Email sent successfully' });
   } catch (error) {
-    console.error('Email error:', error);
+    console.error('Email error details:', {
+      message: error.message,
+      code: error.code,
+      response: error.response
+    });
     res.status(500).json({ success: false, message: 'Failed to send email', error: error.message });
   }
 });
