@@ -76,6 +76,11 @@ PORT=5000
 
 ```
 VITE_API_URL=http://localhost:5000/api
+
+# EmailJS Configuration
+VITE_EMAILJS_SERVICE_ID=your_service_id
+VITE_EMAILJS_WELCOME_TEMPLATE_ID=your_template_id
+VITE_EMAILJS_PUBLIC_KEY=your_public_key
 ```
 
 ## JWT Implementation
@@ -94,15 +99,43 @@ VITE_API_URL=http://localhost:5000/api
 - SameSite attribute prevents CSRF attacks
 - Automatic logout on token expiration
 
+## EmailJS Implementation
+
+### Welcome Email Feature
+
+- Automated welcome email sent upon user registration
+- EmailJS integration for reliable email delivery
+- Professional HTML email templates
+- No backend email server required
+
+### Setup Instructions
+
+1. **Create EmailJS Account**: Sign up at [EmailJS](https://www.emailjs.com/)
+2. **Configure Email Service**: Connect your Gmail account
+3. **Create Email Template**: Design welcome email template
+4. **Get Credentials**: Copy Service ID, Template ID, and Public Key
+5. **Update .env**: Add credentials to `frontend/.env`
+
+For detailed setup instructions, see [EMAILJS_SETUP_GUIDE.md](EMAILJS_SETUP_GUIDE.md)
+
+### Email Features
+
+- Welcome email with user's name
+- Professional HTML design
+- Automatic sending on registration
+- Error handling (registration succeeds even if email fails)
+- Free tier: 200 emails/month
+
 ## Features
 
 ### Authentication
 
-- User registration
+- User registration with welcome email
 - Login/Logout
 - JWT token management with HTTP-only cookies
 - Secure token storage and automatic refresh
 - Protected routes
+- EmailJS integration for automated emails
 
 ### User Management
 
@@ -365,6 +398,7 @@ MS/
 ├── .env                               # Root environment variables
 ├── .gitignore                         # Root git ignore
 ├── CONTACT_FORM_GUIDE.md              # Contact form documentation
+├── EMAILJS_SETUP_GUIDE.md             # EmailJS setup instructions
 └── README.md                          # This file
 ```
 
@@ -400,6 +434,7 @@ MS/
 - **lucide-react** (v0.548.0) - Icons
 - **chart.js** (v4.5.1) - Data visualization
 - **socket.io-client** (v4.8.1) - WebSocket client
+- **@emailjs/browser** (v4.4.1) - Email service integration
 
 ### Development Tools
 

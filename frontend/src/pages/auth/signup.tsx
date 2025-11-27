@@ -12,6 +12,7 @@ import {
 import { z } from 'zod';
 import { useAuth } from '@/contexts/AuthContext';
 import { toast } from 'sonner';
+import { sendWelcomeEmail } from '@/services/emailService';
 
 // Zod schema for registration validation
 const registerSchema = z
@@ -126,10 +127,18 @@ function signup({ onRegister }: SignupProps) {
       });
 
       if (result.success) {
-        // Show success message
-        toast.success(
-          'Account created successfully! Please login with your credentials.'
-        );
+        // Send welcome email
+        try {
+          await sendWelcomeEmail(formData.name, formData.email);
+          toast.success(
+            'Account created successfully! Welcome email sent. Please login.'
+          );
+        } catch (emailError) {
+          console.error('Welcome email failed:', emailError);
+          toast.success(
+            'Account created successfully! Please login with your credentials.'
+          );
+        }
 
         // Navigate to login after successful registration
         navigate('/');
