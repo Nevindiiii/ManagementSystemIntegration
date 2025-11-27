@@ -1,29 +1,68 @@
 import express from "express";
 import Auth from "../Models/AuthModels.js";
 import { generateToken, refreshToken } from "../Middleware/authMiddleware.js";
+import crypto from "crypto";
+import nodemailer from "nodemailer";
 
 const router = express.Router();
 
-// Register new user
+// Generate random password
+const generatePassword = () => {
+  return crypto.randomBytes(8).toString('hex');
+};
+
+// Send password via email
+const sendPasswordEmail = async (name, email, password) => {
+  console.log('📧 Attempting to send email to:', email);
+  console.log('📧 Using EMAIL_USER:', process.env.EMAIL_USER);
+  
+  const transporter = nodemailer.createTransport({
+    service: 'gmail',
+    auth: {
+      user: process.env.EMAIL_USER,
+      pass: process.env.EMAIL_PASS,
+    },
+  });
+
+  const mailOptions = {
+    from: process.env.EMAIL_USER,
+    to: email,
+    subject: 'Your Account Password - Management System',
+    html: `
+      <h2>Welcome ${name}!</h2>
+      <p>Your account has been created successfully.</p>
+      <p><strong>Your Login Credentials:</strong></p>
+      <p>Email: <strong>${email}</strong></p>
+      <p>Password: <strong>${password}</strong></p>
+      <p style="color: red;">⚠️ Please login and change your password immediately for security.</p>
+      <br>
+      <p>Best regards,</p>
+      <p>Management System Team</p>
+    `,
+  };
+
+  try {
+    const info = await transporter.sendMail(mailOptions);
+    console.log('✅ Email sent successfully! Message ID:', info.messageId);
+    return info;
+  } catch (error) {
+    console.error('❌ Transporter sendMail error:', error);
+    throw error;
+  }
+};
+
+// Register new user with auto-generated password
 router.post("/register", async (req, res) => {
   try {
-    const { name, email, password, confirmPassword } = req.body;
+    const { name, email } = req.body;
 
     console.log("Registration request:", { name, email });
 
     // Validate required fields
-    if (!name || !email || !password || !confirmPassword) {
+    if (!name || !email) {
       return res.status(400).json({
         success: false,
-        message: "All fields are required",
-      });
-    }
-
-    // Check if passwords match
-    if (password !== confirmPassword) {
-      return res.status(400).json({
-        success: false,
-        message: "Passwords do not match",
+        message: "Name and email are required",
       });
     }
 
@@ -36,11 +75,14 @@ router.post("/register", async (req, res) => {
       });
     }
 
+    // Generate random password
+    const generatedPassword = generatePassword();
+
     // Create new user
     const newUser = new Auth({
       name,
       email,
-      password,
+      password: generatedPassword,
       role: req.body.role || "user",
     });
 
@@ -48,9 +90,19 @@ router.post("/register", async (req, res) => {
 
     console.log("User registered successfully:", newUser.name);
 
+    // Send password via email
+    try {
+      await sendPasswordEmail(name, email, generatedPassword);
+      console.log("✅ Password email sent successfully to:", email);
+    } catch (emailError) {
+      console.error('❌ Email sending failed:', emailError.message);
+      if (emailError.stack) console.error('Stack:', emailError.stack);
+      // Continue even if email fails
+    }
+
     res.status(201).json({
       success: true,
-      message: "User registered successfully",
+      message: "User registered successfully. Password sent to your email.",
     });
   } catch (error) {
     console.error("Registration error:", error);

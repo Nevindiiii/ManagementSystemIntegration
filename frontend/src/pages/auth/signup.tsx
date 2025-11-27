@@ -3,55 +3,38 @@ import { useNavigate } from 'react-router-dom';
 import {
   User,
   Mail,
-  Lock,
   AlertCircle,
-  Eye,
-  EyeOff,
   UserPlus,
 } from 'lucide-react';
 import { z } from 'zod';
 import { useAuth } from '@/contexts/AuthContext';
 import { toast } from 'sonner';
-import { sendWelcomeEmail } from '@/services/emailService';
+import emailjs from '@emailjs/browser';
+
 
 // Zod schema for registration validation
-const registerSchema = z
-  .object({
-    name: z
-      .string()
-      .min(1, 'Name is required')
-      .min(2, 'Name must be at least 2 characters long')
-      .max(50, 'Name must be less than 50 characters'),
-    email: z
-      .string()
-      .min(1, 'Email is required')
-      .email('Please enter a valid email address'),
-    password: z
-      .string()
-      .min(1, 'Password is required')
-      .min(6, 'Password must be at least 6 characters long')
-      .max(100, 'Password must be less than 100 characters'),
-    confirmPassword: z.string().min(1, 'Password confirmation is required'),
-    role: z.enum(['user', 'admin']).optional(),
-  })
-  .refine((data) => data.password === data.confirmPassword, {
-    message: 'Passwords do not match',
-    path: ['confirmPassword'],
-  });
+const registerSchema = z.object({
+  name: z
+    .string()
+    .min(1, 'Name is required')
+    .min(2, 'Name must be at least 2 characters long')
+    .max(50, 'Name must be less than 50 characters'),
+  email: z
+    .string()
+    .min(1, 'Email is required')
+    .email('Please enter a valid email address'),
+  role: z.enum(['user', 'admin']).optional(),
+});
 
 interface RegisterData {
   name: string;
   email: string;
-  password: string;
-  confirmPassword: string;
   role?: 'user' | 'admin';
 }
 
 interface ValidationErrors {
   name?: string;
   email?: string;
-  password?: string;
-  confirmPassword?: string;
 }
 
 interface SignupProps {
@@ -64,15 +47,11 @@ function signup({ onRegister }: SignupProps) {
   const [formData, setFormData] = useState<RegisterData>({
     name: '',
     email: '',
-    password: '',
-    confirmPassword: '',
     role: 'user',
   });
 
   const [isLoading, setIsLoading] = useState(false);
   const [errors, setErrors] = useState<ValidationErrors>({});
-  const [showPassword, setShowPassword] = useState(false);
-  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
   const handleInputChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
@@ -121,25 +100,30 @@ function signup({ onRegister }: SignupProps) {
       const result = await register({
         name: formData.name,
         email: formData.email,
-        password: formData.password,
-        confirmPassword: formData.confirmPassword,
         role: formData.role,
       });
 
       if (result.success) {
-        // Send welcome email
+        // Send welcome email via EmailJS
         try {
-          await sendWelcomeEmail(formData.name, formData.email);
-          toast.success(
-            'Account created successfully! Welcome email sent. Please login.'
+          await emailjs.send(
+            import.meta.env.VITE_EMAILJS_SERVICE_ID,
+            import.meta.env.VITE_EMAILJS_WELCOME_TEMPLATE_ID,
+            {
+              app_name: 'Management System',
+              to_name: formData.name,
+              name: formData.name,
+              email: formData.email,
+            },
+            import.meta.env.VITE_EMAILJS_PUBLIC_KEY
           );
         } catch (emailError) {
           console.error('Welcome email failed:', emailError);
-          toast.success(
-            'Account created successfully! Please login with your credentials.'
-          );
         }
 
+        toast.success(
+          'Account created! Password sent to your email. Please check your inbox.'
+        );
         // Navigate to login after successful registration
         navigate('/');
       } else {
@@ -223,80 +207,11 @@ function signup({ onRegister }: SignupProps) {
               )}
             </div>
 
-            {/* Password Input */}
-            <div className="relative">
-              <div
-                className={`flex items-center rounded-2xl border bg-white/60 px-4 py-4 backdrop-blur-sm transition-all ${
-                  errors.password
-                    ? 'border-red-500 focus-within:border-red-500 focus-within:ring-2 focus-within:ring-red-100'
-                    : 'border-gray-300/50 focus-within:border-black focus-within:ring-2 focus-within:ring-gray-200/50'
-                }`}
-              >
-                <Lock className="mr-3 h-5 w-5 text-black" />
-                <input
-                  type={showPassword ? 'text' : 'password'}
-                  name="password"
-                  placeholder="Password"
-                  value={formData.password}
-                  onChange={handleInputChange}
-                  className="flex-1 bg-transparent text-black placeholder-gray-600 outline-none"
-                />
-                <button
-                  type="button"
-                  onClick={() => setShowPassword(!showPassword)}
-                  className="ml-2 text-black transition-colors hover:text-gray-600"
-                >
-                  {showPassword ? (
-                    <EyeOff className="h-5 w-5" />
-                  ) : (
-                    <Eye className="h-5 w-5" />
-                  )}
-                </button>
-              </div>
-              {errors.password && (
-                <div className="mt-1 flex items-center text-sm text-red-500">
-                  <AlertCircle className="mr-1 h-4 w-4" />
-                  {errors.password}
-                </div>
-              )}
-            </div>
-
-            {/* Confirm Password Input */}
-            <div className="relative">
-              <div
-                className={`flex items-center rounded-2xl border bg-white/60 px-4 py-4 backdrop-blur-sm transition-all ${
-                  errors.confirmPassword
-                    ? 'border-red-500 focus-within:border-red-500 focus-within:ring-2 focus-within:ring-red-100'
-                    : 'border-gray-300/50 focus-within:border-black focus-within:ring-2 focus-within:ring-gray-200/50'
-                }`}
-              >
-                <Lock className="mr-3 h-5 w-5 text-black" />
-                <input
-                  type={showConfirmPassword ? 'text' : 'password'}
-                  name="confirmPassword"
-                  placeholder="Confirm Password"
-                  value={formData.confirmPassword}
-                  onChange={handleInputChange}
-                  className="flex-1 bg-transparent text-black placeholder-gray-600 outline-none"
-                />
-                <button
-                  type="button"
-                  onClick={() => setShowConfirmPassword(!showConfirmPassword)}
-                  className="ml-2 text-black transition-colors hover:text-gray-600"
-                >
-                  {showConfirmPassword ? (
-                    <EyeOff className="h-5 w-5" />
-                  ) : (
-                    <Eye className="h-5 w-5" />
-                  )}
-                </button>
-              </div>
-              {errors.confirmPassword && (
-                <div className="mt-1 flex items-center text-sm text-red-500">
-                  <AlertCircle className="mr-1 h-4 w-4" />
-                  {errors.confirmPassword}
-                </div>
-              )}
+            {/* Info Message */}
+            <div className="rounded-2xl border border-blue-200 bg-blue-50 px-4 py-3">
+              <p className="text-sm text-blue-800">
+                🔒 A secure password will be automatically generated and sent to your email.
+              </p>
             </div>
 
             {/* Role Select */}
