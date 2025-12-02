@@ -1,12 +1,15 @@
 const nodemailer = require('nodemailer');
+const { application } = require('./application.js');
 
 // Email transporter configuration
 const createTransporter = () => {
   return nodemailer.createTransporter({
-    service: 'gmail',
+    host: application.EMAIL_HOST,
+    port: application.EMAIL_PORT,
+    secure: application.EMAIL_SECURE,
     auth: {
-      user: process.env.EMAIL_USER,
-      pass: process.env.EMAIL_PASS
+      user: application.EMAIL_USER,
+      pass: application.EMAIL_PASSWORD
     }
   });
 };
@@ -78,7 +81,7 @@ const sendEmail = async (to, template, data = {}) => {
     const emailContent = emailTemplates[template](data);
     
     const mailOptions = {
-      from: process.env.EMAIL_USER,
+      from: application.EMAIL_FROM || application.EMAIL_USER,
       to: to,
       subject: emailContent.subject,
       html: emailContent.html

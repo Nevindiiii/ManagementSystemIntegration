@@ -1,12 +1,10 @@
 import mongoose from "mongoose";
-import dotenv from "dotenv"; // Load environment variables
-
-dotenv.config();
+import { application } from "./application.js";
 
 // MongoDB connection 
 const connectDB = async () => {
   try { // Check if MONGO_URI is set
-    const conn = await mongoose.connect(process.env.MONGO_URI, {
+    const conn = await mongoose.connect(application.MONGO_URL, {
       serverSelectionTimeoutMS: 5000,
       socketTimeoutMS: 45000,
       tls: true,

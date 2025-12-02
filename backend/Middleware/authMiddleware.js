@@ -1,4 +1,5 @@
 import jwt from "jsonwebtoken";
+import { application } from "../config/application.js";
 import AuthUser from "../Models/AuthModels.js";
 
 // JWT Token generation
@@ -10,8 +11,8 @@ export const generateToken = (user) => {
       name: user.name,
       role: user.role || "user", 
     },
-    process.env.JWT_SECRET || "your-secret-key", // Use a strong secret key in production
-    { expiresIn: "1h" }
+    application.JWT_SECRET,
+    { expiresIn: application.JWT_EXPIRES_IN }
   );
 };
 
@@ -29,7 +30,7 @@ export const verifyToken = async (req, res, next) => {
 
     const decoded = jwt.verify( // Verification
       token,
-      process.env.JWT_SECRET || "your-secret-key"
+      application.JWT_SECRET
     );
     const user = await AuthUser.findById(decoded.userId).select("-password");
 
@@ -71,7 +72,7 @@ export const refreshToken = async (req, res) => {
 
     const decoded = jwt.verify(
       token,
-      process.env.JWT_SECRET || "your-secret-key"
+      application.JWT_SECRET
     );
     const user = await AuthUser.findById(decoded.userId);
 

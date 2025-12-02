@@ -1,9 +1,9 @@
 import express from "express";
 import cors from "cors";
-import dotenv from "dotenv";
 import cookieParser from "cookie-parser";
 import { createServer } from "http";
 import { Server } from "socket.io";
+import { application } from "./config/application.js";
 import connectDB from "./config/db.js";
 import userRoutes from "./Routes/usersRoutes.js";
 import authRoutes from "./Routes/authRoutes.js";
@@ -13,14 +13,12 @@ import productsRoutes from "./Routes/productsRoutes.js";
 import uploadRoutes from "./Routes/uploadRoutes.js";
 import profileRoutes from "./Routes/profileRoutes.js";
 import contactRoutes from "./Routes/contact.js";
-
-dotenv.config();
 const app = express();
 const httpServer = createServer(app);
 
 // Correct, simplified CORS setup
 const allowedOrigins = [
-  "http://localhost:5173",
+  application.CLIENT_URL,
   "http://localhost:5174",
   "http://localhost:3000",
 ];
@@ -104,5 +102,4 @@ app.use("/api", (req, res) => {
   });
 });
 
-const PORT = process.env.PORT || 5001;
-httpServer.listen(PORT, () => console.log(` Server running on port ${PORT}`));
+httpServer.listen(application.PORT, () => console.log(` Server running on port ${application.PORT}`));

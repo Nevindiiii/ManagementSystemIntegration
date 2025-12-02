@@ -1,17 +1,20 @@
 import nodemailer from 'nodemailer';
+import { application } from '../config/application.js';
 
 const transporter = nodemailer.createTransport({
-  service: 'gmail',
+  host: application.EMAIL_HOST,
+  port: application.EMAIL_PORT,
+  secure: application.EMAIL_SECURE,
   auth: {
-    user: process.env.EMAIL_USER,
-    pass: process.env.EMAIL_PASS,
+    user: application.EMAIL_USER,
+    pass: application.EMAIL_PASSWORD,
   },
 });
 
 export const sendContactEmail = async (name, email, subject, message) => {
   // Email to admin
   await transporter.sendMail({
-    from: process.env.EMAIL_USER,
+    from: application.EMAIL_FROM || application.EMAIL_USER,
     to: 'nevindisadeera@gmail.com',
     subject: `Contact Form: ${subject}`,
     html: `
@@ -26,7 +29,7 @@ export const sendContactEmail = async (name, email, subject, message) => {
 
   // Auto-reply to user
   await transporter.sendMail({
-    from: process.env.EMAIL_USER,
+    from: application.EMAIL_FROM || application.EMAIL_USER,
     to: email,
     subject: 'Thank you for contacting us!',
     html: `

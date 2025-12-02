@@ -8,6 +8,7 @@ import {
   DialogContent,
 } from '@/components/ui/dialog';
 
+
 function ManualProductActionsCell({ 
   product, 
   onEdit, 
