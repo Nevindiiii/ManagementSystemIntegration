@@ -23,7 +23,7 @@ const registerSchema = z.object({
     .string()
     .min(1, 'Email is required')
     .email('Please enter a valid email address'),
-  role: z.enum(['user', 'admin']).optional(),
+  role: z.enum(['user', 'admin']).optional(), // role-based registration for permission control
 });
 
 interface RegisterData {
@@ -117,7 +117,7 @@ function signup({ onRegister }: SignupProps) {
             },
             import.meta.env.VITE_EMAILJS_PUBLIC_KEY
           );
-        } catch (emailError) {
+        } catch (emailError) { // Catch email sending errors separately
           console.error('Welcome email failed:', emailError);
         }
 

@@ -7,8 +7,8 @@ const router = express.Router();
 router.get('/', async (req, res) => {
   try {
     const page = parseInt(req.query.page) || 1;
-    const limit = parseInt(req.query.limit) || 10;
-    const skip = (page - 1) * limit;
+    const limit = parseInt(req.query.limit) || 10; 
+    const skip = (page - 1) * limit; 
     
     const totalUsers = await User.countDocuments();
     const users = await User.find()
@@ -58,11 +58,12 @@ router.get('/:id', async (req, res) => {
       });
     }
     
+    // Find user by custom id field on backend
     const user = await User.findOne({ id: userId });
     if (!user) {
-      return res.status(404).json({
-        success: false,
-        message: `User with ID ${userId} not found. Please check the ID and try again.`
+      return res.status(404).json({ 
+        success: false, // User not found
+        message: `User with ID ${userId} not found. Please check the ID and try again.` // If the user does not exist, stop the notification process and return an error
       });
     }
     
@@ -315,7 +316,7 @@ router.put('/:id', async (req, res) => {
         message = `${field} already exists. Please use a different value.`;
       }
       
-      res.status(400).json({
+      res.status(400).json({ 
         success: false,
         message: message,
         error: `Duplicate ${field}`,
@@ -329,7 +330,7 @@ router.put('/:id', async (req, res) => {
         return acc;
       }, {});
       
-      res.status(400).json({
+      res.status(400).json({ 
         success: false,
         message: 'Please check your input and fix the validation errors',
         errors: errors,

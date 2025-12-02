@@ -67,19 +67,19 @@ export default function ManualProducts() {
     // Upload to Cloudinary
     setUploading(true);
     try {
-      const { uploadToCloudinary } = await import('@/utils/cloudinary');
+      const { uploadToCloudinary } = await import('@/utils/cloudinary'); // Dynamic import 
       const imageUrl = await uploadToCloudinary(file);
       setNewProduct({ ...newProduct, image: imageUrl });
-    } catch (error) {
+    } catch (error) { // Handle upload error
       console.error('Upload failed:', error);
       alert('Failed to upload image. Please try again.');
       setImagePreview('');
-    } finally {
+    } finally { // Reset uploading state
       setUploading(false);
     }
   };
 
-  const totalPages = Math.ceil(products.length / pageSize);
+  const totalPages = Math.ceil(products.length / pageSize); 
   const startIndex = (currentPage - 1) * pageSize;
   const paginatedProducts = products.slice(startIndex, startIndex + pageSize);
 

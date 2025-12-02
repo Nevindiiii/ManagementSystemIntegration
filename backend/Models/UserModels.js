@@ -1,6 +1,6 @@
 import mongoose from 'mongoose';
 
-const userSchema = new mongoose.Schema({
+const userSchema = new mongoose.Schema({  // Define User schema
   id: {
     type: Number,
     required: [true, 'ID is required'],

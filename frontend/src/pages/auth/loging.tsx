@@ -15,7 +15,7 @@ const loginSchema = z.object({
     .string()
     .min(1, 'Password is required')
     .min(6, 'Password must be at least 6 characters long'),
-  role: z.enum(['user', 'admin']).optional(),
+  role: z.enum(['user', 'admin']).optional(),  // role based permission handling
 });
 
 interface LoginData {

@@ -7,6 +7,7 @@ dotenv.config();
 
 const router = express.Router();
 
+// AWS S3 Client setup
 const s3Client = new S3Client({
   region: process.env.AWS_REGION,
   credentials: {
@@ -19,7 +20,7 @@ const upload = multer({
   storage: multer.memoryStorage(),
   limits: { fileSize: 5 * 1024 * 1024 }
 });
-
+// Upload profile image
 router.post('/profile-image', upload.single('image'), async (req, res) => {
   try {
     if (!req.file) {
@@ -28,6 +29,7 @@ router.post('/profile-image', upload.single('image'), async (req, res) => {
 
     const fileName = `profiles/profile-${Date.now()}-${req.file.originalname}`;
     
+    // Upload to S3
     const command = new PutObjectCommand({
       Bucket: process.env.AWS_BUCKET_NAME,
       Key: fileName,

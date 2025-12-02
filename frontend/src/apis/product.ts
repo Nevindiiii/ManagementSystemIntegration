@@ -14,14 +14,25 @@ export interface Product {
   size?: string;
 }
 
+// Environment variables for API URLs
 
-const API_BASE_URL = import.meta.env.VITE_SECRET_API_BASE_URL || 'https://dummyjson.com';
-const BACKEND_API_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:5001/api';
+const API_BASE_URL =
+  import.meta.env.VITE_SECRET_API_BASE_URL || 'https://dummyjson.com'; // Public API URL
+const BACKEND_API_URL =
+  import.meta.env.VITE_API_BASE_URL || 'http://localhost:5001/api';
 
 console.log('Secret API URL:', API_BASE_URL);
 
 // Product API functions with pagination
-export async function fetchProducts(skip = 0, limit = 10): Promise<{ products: Product[], total: number, skip: number, limit: number }> {
+export async function fetchProducts(
+  skip = 0,
+  limit = 10
+): Promise<{
+  products: Product[];
+  total: number;
+  skip: number;
+  limit: number;
+}> {
   try {
     const res = await axios.get(`${API_BASE_URL}?limit=${limit}&skip=${skip}`);
     const products: Product[] = res.data.products.map((product: any) => ({
@@ -38,7 +49,7 @@ export async function fetchProducts(skip = 0, limit = 10): Promise<{ products: P
       products,
       total: res.data.total || 0,
       skip: res.data.skip || 0,
-      limit: res.data.limit || limit
+      limit: res.data.limit || limit,
     };
   } catch (error) {
     console.error('Error fetching products:', error);
@@ -66,9 +77,13 @@ export async function fetchProductById(id: number): Promise<Product | null> {
 }
 
 // Manual product CRUD operations
-export async function createProduct(product: Omit<Product, 'id'>): Promise<Product> {
+export async function createProduct(
+  product: Omit<Product, 'id'>
+): Promise<Product> {
   try {
-    const res = await axios.post(`${BACKEND_API_URL}/products`, product, { withCredentials: true });
+    const res = await axios.post(`${BACKEND_API_URL}/products`, product, {
+      withCredentials: true,
+    });
     return { ...res.data, id: res.data._id || res.data.id };
   } catch (error) {
     console.error('Error creating product:', error);
@@ -76,9 +91,14 @@ export async function createProduct(product: Omit<Product, 'id'>): Promise<Produ
   }
 }
 
-export async function updateProduct(id: string, product: Partial<Product>): Promise<Product> {
+export async function updateProduct(
+  id: string,
+  product: Partial<Product>
+): Promise<Product> {
   try {
-    const res = await axios.put(`${BACKEND_API_URL}/products/${id}`, product, { withCredentials: true });
+    const res = await axios.put(`${BACKEND_API_URL}/products/${id}`, product, {
+      withCredentials: true,
+    });
     return res.data;
   } catch (error) {
     console.error('Error updating product:', error);
@@ -88,7 +108,9 @@ export async function updateProduct(id: string, product: Partial<Product>): Prom
 
 export async function deleteProduct(id: string): Promise<void> {
   try {
-    await axios.delete(`${BACKEND_API_URL}/products/${id}`, { withCredentials: true });
+    await axios.delete(`${BACKEND_API_URL}/products/${id}`, {
+      withCredentials: true,
+    });
   } catch (error) {
     console.error('Error deleting product:', error);
     throw error;
@@ -97,7 +119,9 @@ export async function deleteProduct(id: string): Promise<void> {
 
 export async function fetchManualProducts(): Promise<Product[]> {
   try {
-    const res = await axios.get(`${BACKEND_API_URL}/products`, { withCredentials: true });
+    const res = await axios.get(`${BACKEND_API_URL}/products`, {
+      withCredentials: true,
+    });
     return res.data.map((p: any) => ({ ...p, id: p._id || p.id }));
   } catch (error) {
     console.error('Error fetching manual products:', error);

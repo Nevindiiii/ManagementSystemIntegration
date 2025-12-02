@@ -8,9 +8,9 @@ export const generateToken = (user) => {
       userId: user._id,
       email: user.email,
       name: user.name,
-      role: user.role || "user",
+      role: user.role || "user", 
     },
-    process.env.JWT_SECRET || "your-secret-key",
+    process.env.JWT_SECRET || "your-secret-key", // Use a strong secret key in production
     { expiresIn: "1h" }
   );
 };
@@ -27,7 +27,7 @@ export const verifyToken = async (req, res, next) => {
       });
     }
 
-    const decoded = jwt.verify(
+    const decoded = jwt.verify( // Verification
       token,
       process.env.JWT_SECRET || "your-secret-key"
     );

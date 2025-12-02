@@ -2,7 +2,7 @@ import express from 'express';
 import nodemailer from 'nodemailer';
 const router = express.Router();
 
-const transporter = nodemailer.createTransport({
+const transporter = nodemailer.createTransport({ // SMTP configuration
   host: 'smtp.gmail.com',
   port: 587,
   secure: false,
@@ -20,14 +20,14 @@ router.post('/send', async (req, res) => {
     passLength: process.env.EMAIL_PASS?.length
   });
 
-  try {
-    const info = await transporter.sendMail({
+  try { 
+    const info = await transporter.sendMail({ // Send email using transporter
       from: process.env.EMAIL_USER,
       to: email,
       subject: `Contact Form: ${subject}`,
       html: `
         <h3>Thank you for contacting us, ${name}!</h3>
-        <p>We received your message:</p>
+        <p>We received your message:</p> 
         <blockquote>${message}</blockquote>
         <p>We'll get back to you soon.</p>
       `
@@ -35,7 +35,7 @@ router.post('/send', async (req, res) => {
 
     console.log('Email sent:', info.messageId);
     res.json({ success: true, message: 'Email sent successfully' });
-  } catch (error) {
+  } catch (error) { // Handle errors
     console.error('Email error details:', {
       message: error.message,
       code: error.code,

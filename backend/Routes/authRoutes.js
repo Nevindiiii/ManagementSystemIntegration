@@ -11,16 +11,18 @@ const generatePassword = () => {
   return crypto.randomBytes(8).toString('hex');
 };
 
-// Send password via email
+
+// Send password via email to user after registration with nodemailer
 const sendPasswordEmail = async (name, email, password) => {
-  console.log('📧 Attempting to send email to:', email);
-  console.log('📧 Using EMAIL_USER:', process.env.EMAIL_USER);
+  console.log(' Attempting to send email to:', email);
+  console.log('Using EMAIL_USER:', process.env.EMAIL_USER);
   
+  // Create transporter object using SMTP transport
   const transporter = nodemailer.createTransport({
     service: 'gmail',
     auth: {
-      user: process.env.EMAIL_USER,
-      pass: process.env.EMAIL_PASS,
+      user: process.env.EMAIL_USER, // email address
+      pass: process.env.EMAIL_PASS, // email password or app password
     },
   });
 
@@ -43,10 +45,10 @@ const sendPasswordEmail = async (name, email, password) => {
 
   try {
     const info = await transporter.sendMail(mailOptions);
-    console.log('✅ Email sent successfully! Message ID:', info.messageId);
+    console.log(' Email sent successfully! Message ID:', info.messageId);
     return info;
   } catch (error) {
-    console.error('❌ Transporter sendMail error:', error);
+    console.error('Transporter sendMail error:', error);
     throw error;
   }
 };
@@ -93,9 +95,9 @@ router.post("/register", async (req, res) => {
     // Send password via email
     try {
       await sendPasswordEmail(name, email, generatedPassword);
-      console.log("✅ Password email sent successfully to:", email);
+      console.log(" Password email sent successfully to:", email);
     } catch (emailError) {
-      console.error('❌ Email sending failed:', emailError.message);
+      console.error('Email sending failed:', emailError.message);
       if (emailError.stack) console.error('Stack:', emailError.stack);
       // Continue even if email fails
     }

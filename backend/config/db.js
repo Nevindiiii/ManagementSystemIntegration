@@ -1,11 +1,11 @@
 import mongoose from "mongoose";
-import dotenv from "dotenv";
+import dotenv from "dotenv"; // Load environment variables
 
 dotenv.config();
 
 // MongoDB connection 
 const connectDB = async () => {
-  try {
+  try { // Check if MONGO_URI is set
     const conn = await mongoose.connect(process.env.MONGO_URI, {
       serverSelectionTimeoutMS: 5000,
       socketTimeoutMS: 45000,
@@ -17,7 +17,7 @@ const connectDB = async () => {
     
     console.log(` MongoDB Connected: ${conn.connection.host}`);
     console.log(`Database Name: ${conn.connection.name}`);
-  } catch (error) {
+  } catch (error) { // Handle connection errors
     console.error(" MongoDB Connection Error:", error.message);
     process.exit(1);
   }
@@ -25,15 +25,15 @@ const connectDB = async () => {
 
 // MongoDB connection events
 mongoose.connection.on('connected', () => {
-  console.log('Mongoose connected to MongoDB');
+  console.log('Mongoose connected to MongoDB'); // Successfully connected
 });
 
 mongoose.connection.on('error', (err) => {
-  console.error('Mongoose connection error:', err);
+  console.error('Mongoose connection error:', err); // Connection error
 });
 
 mongoose.connection.on('disconnected', () => {
-  console.log(' Mongoose disconnected from MongoDB');
+  console.log(' Mongoose disconnected from MongoDB'); // Disconnected
 });
 
 // Graceful shutdown

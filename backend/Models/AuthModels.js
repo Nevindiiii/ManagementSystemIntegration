@@ -1,7 +1,7 @@
 import mongoose from 'mongoose';
-import bcrypt from 'bcryptjs';
+import bcrypt from 'bcryptjs'; 
 
-const authSchema = new mongoose.Schema({
+const authSchema = new mongoose.Schema({ // Schema for authentication users
   name: {
     type: String,
     required: [true, 'Name is required'],
@@ -20,7 +20,7 @@ const authSchema = new mongoose.Schema({
     required: [true, 'Password is required'],
     minlength: [6, 'Password must be at least 6 characters long']
   },
-  role: {
+  role: { 
     type: String,
     enum: ['user', 'admin'],
     default: 'user'
@@ -31,7 +31,7 @@ const authSchema = new mongoose.Schema({
 });
 
 // Hash password before saving
-authSchema.pre('save', async function(next) {
+authSchema.pre('save', async function(next) { // Only hash if password is modified
   if (!this.isModified('password')) return next();
   
   try {
@@ -41,13 +41,13 @@ authSchema.pre('save', async function(next) {
   } catch (error) {
     next(error);
   }
-});
+}); 
 
 // Compare password method
-authSchema.methods.comparePassword = async function(candidatePassword) {
+authSchema.methods.comparePassword = async function(candidatePassword) { // Compare given password with hashed password
   return bcrypt.compare(candidatePassword, this.password);
 };
 
-const Auth = mongoose.model('Auth', authSchema);
+const Auth = mongoose.model('Auth', authSchema); // 'Auth' model for 'authusers' collection
 
 export default Auth;
