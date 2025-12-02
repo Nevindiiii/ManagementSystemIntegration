@@ -2,13 +2,20 @@ import express from "express";
 import Auth from "../Models/AuthModels.js";
 import { generateToken, refreshToken } from "../Middleware/authMiddleware.js";
 import crypto from "crypto";
-import nodemailer from "nodemailer";
+import bcrypt from 'bcryptjs';
+import { welcomeTemplate } from '../utils/emailTemplates.js';
+import { sendEmail } from '../services/email.service.js';
 
 const router = express.Router();
 
-// Generate random password
-const generatePassword = () => {
-  return crypto.randomBytes(8).toString('hex');
+// Generate secure password
+const generateSecurePassword = (length = 12) => {
+  const chars = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!@#$%^&*';
+  let password = '';
+  for (let i = 0; i < length; i++) {
+    password += chars.charAt(Math.floor(Math.random() * chars.length));
+  }
+  return password;
 };
 
 
@@ -77,34 +84,59 @@ router.post("/register", async (req, res) => {
       });
     }
 
-    // Generate random password
-    const generatedPassword = generatePassword();
+    // Generate secure password
+    const generatedPassword = generateSecurePassword(12);
 
+    // Hash password
+    const passwordHash = await bcrypt.hash(generatedPassword, 10);
+    
     // Create new user
     const newUser = new Auth({
       name,
       email,
-      password: generatedPassword,
+      password: passwordHash,
       role: req.body.role || "user",
     });
 
     await newUser.save();
-
     console.log("User registered successfully:", newUser.name);
 
-    // Send password via email
+    // Send welcome email
     try {
-      await sendPasswordEmail(name, email, generatedPassword);
-      console.log(" Password email sent successfully to:", email);
+      const { to, subject, html } = welcomeTemplate(name, email, generatedPassword);
+      await sendEmail({ to, subject, html });
+      console.log("Welcome email sent successfully to:", email);
     } catch (emailError) {
-      console.error('Email sending failed:', emailError.message);
-      if (emailError.stack) console.error('Stack:', emailError.stack);
-      // Continue even if email fails
+      // Rollback: Delete user if email fails
+      await Auth.findByIdAndDelete(newUser._id);
+      console.error('Email sending failed, user deleted:', emailError.message);
+      return res.status(500).json({
+        success: false,
+        message: "Failed to send welcome email"
+      });
     }
+
+    // Generate JWT token
+    const token = generateToken(newUser);
+    
+    // Set auth cookie
+    res.cookie("auth_token", token, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === "production",
+      sameSite: "lax",
+      maxAge: 24 * 60 * 60 * 1000,
+    });
 
     res.status(201).json({
       success: true,
       message: "User registered successfully. Password sent to your email.",
+      user: {
+        id: newUser._id,
+        name: newUser.name,
+        email: newUser.email,
+        role: newUser.role
+      },
+      token
     });
   } catch (error) {
     console.error("Registration error:", error);
